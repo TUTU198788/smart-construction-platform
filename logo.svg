@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+    <!-- 建筑轮廓 -->
+    <path d="M40 50h20L50 30z" fill="#2A5CAA"/>
+    <!-- 链条 -->
+    <circle cx="50" cy="40" r="15" fill="none" stroke="#2A5CAA" stroke-width="2"/>
+    <!-- 绿叶 -->
+    <path d="M45 35c0 0 5-5 10 0s0 10 0 10" fill="none" stroke="#4CAF50" stroke-width="2"/>
+    <!-- 文字 -->
+    <text x="80" y="45" font-family="Arial" font-size="24" fill="#2A5CAA">智建云链</text>
+</svg> 

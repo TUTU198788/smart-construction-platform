@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工程保险平台 - 智建云链</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 继承基础样式 */
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 400;
+            src: url(https://fonts.gstatic.com/s/notosanssc/v12/k3kXo84MPvpLmixcA63oeALhL4iJ-Q7m8w.woff2) format('woff2');
+        }
+
+        :root {
+            --primary-color: #2A5CAA; /* 主蓝色 */
+            --secondary-color: #1E3D6B; /* 深蓝色 */
+            --accent-color: #4A90E2; /* 浅蓝色 */
+            --background-color: #f5f5f5; /* 淡灰背景 */
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --border-color: #ddd;
+            --success-color: #4CAF50;
+            --warning-color: #FFC107;
+            --error-color: #f44336;
+            --tech-blue: #2A5CAA; /* 主蓝色 */
+            --tech-light-blue: #4A90E2; /* 浅蓝色 */
+            --tech-dark-blue: #1E3D6B; /* 深蓝色 */
+            --tech-gradient: linear-gradient(135deg, #2A5CAA 0%, #4A90E2 100%); /* 蓝色渐变 */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding-top: 60px;
+            background: #f5f5f5;
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 顶部导航栏动效 */
+        header {
+            background: var(--tech-gradient);
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 8px 0;
+            background: rgba(42, 92, 170, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo-image {
+            height: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* LOGO样式更新 */
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap;
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .logo-en {
+            font-size: 12px;
+            margin-left: 0;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        a.logo-container:hover .logo-en {
+            opacity: 1;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            -ms-overflow-style: none;
+        }
+
+        nav ul::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        nav ul::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+            padding: 6px 10px;
+            border-radius: var(--border-radius);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        nav a:hover::after {
+            width: 80%;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        nav a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 30px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .menu-toggle span:nth-child(1) {
+            top: 0;
+        }
+
+        .menu-toggle span:nth-child(2) {
+            top: 9px;
+        }
+
+        .menu-toggle span:nth-child(3) {
+            top: 18px;
+        }
+        
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg);
+            top: 9px;
+        }
+        
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg);
+            top: 9px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            nav ul {
+                position: absolute;
+                right: 0;
+                top: 60px;
+                background-color: rgba(0, 0, 0, 0.9);
+                flex-direction: column;
+                width: 50%;
+                transform: translateX(100%);
+                transition: transform 0.5s ease-in;
+                padding: 2rem;
+                z-index: 999;
+            }
+
+            nav ul.active {
+                transform: translateX(0%);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* 保险产品卡片 */
+        .insurance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .insurance-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .insurance-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .insurance-icon {
+            width: 60px;
+            height: 60px;
+            background: #e3f2fd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .insurance-icon i {
+            font-size: 28px;
+            color: #2A5CAA;
+        }
+
+        .insurance-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .insurance-desc {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .insurance-details {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .detail-item {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .detail-label {
+            color: #999;
+        }
+
+        /* 推荐区域 */
+        .recommendations {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .recommendations h2 {
+            color: #2A5CAA;
+            margin-bottom: 20px;
+        }
+
+        .recommendation-list {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        .recommendation-item {
+            min-width: 250px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        /* 按钮样式 */
+        .action-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #2A5CAA;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+
+        .action-btn:hover {
+            background: #4CAF50;
+        }
+
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #e8f5e9;
+            color: #4CAF50;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+
+        /* 费率表格 */
+        .rate-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .rate-table th,
+        .rate-table td {
+            padding: 10px;
+            border: 1px solid #eee;
+            text-align: left;
+        }
+
+        .rate-table th {
+            background: #f8f9fa;
+            font-weight: normal;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header>
+        <nav>
+            <a href="/" class="logo-container">
+                <svg width="40" height="40" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="25" cy="25" r="20" fill="#2A5CAA"/>
+                    <circle cx="25" cy="25" r="15" fill="none" stroke="#ffffff" stroke-width="2"/>
+                    <circle cx="25" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="10" r="3" fill="#ffffff"/>
+                    <circle cx="40" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="40" r="3" fill="#ffffff"/>
+                    <circle cx="10" cy="25" r="3" fill="#ffffff"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>智建云链</h1>
+                    <p class="logo-en">SmartBuildChain</p>
+                </div>
+            </a>
+            <ul>
+                <li><a href="/">首页</a></li>
+                <li><a href="/ai-design.html">AI方案设计</a></li>
+                <li><a href="/ai-center.html">AI联合设计中心</a></li>
+                <li><a href="/smart-factory.html">数智工厂</a></li>
+                <li><a href="/industrial-construction.html">工业化建造</a></li>
+                <li><a href="/insurance-platform.html" class="active">工程保险平台</a></li>
+                <li><a href="/talent-platform.html">产业人才平台</a></li>
+                <li><a href="/tech-innovation.html">创新技术转化</a></li>
+                <li><a href="/patent-platform.html">专利协作与维权平台</a></li>
+            </ul>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        <!-- 保险产品列表 -->
+        <div class="insurance-grid">
+            <!-- 装配式节点施工缺陷险 -->
+            <div class="insurance-card">
+                <div class="insurance-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <h3 class="insurance-title">装配式节点施工缺陷险</h3>
+                <p class="insurance-desc">
+                    针对装配式建筑节点施工过程中可能出现的质量缺陷提供全面保障
+                </p>
+                <div class="insurance-details">
+                    <div class="detail-item">
+                        <span class="detail-label">承保范围：</span>
+                        节点连接质量
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">基础费率：</span>
+                        0.5%
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">最高赔付：</span>
+                        500万
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">保障期限：</span>
+                        2年
+                    </div>
+                </div>
+                <a href="#" class="action-btn">立即投保</a>
+            </div>
+
+            <!-- 模块连接质量险 -->
+            <div class="insurance-card">
+                <div class="insurance-icon">
+                    <i class="fas fa-cubes"></i>
+                </div>
+                <h3 class="insurance-title">模块连接质量险</h3>
+                <p class="insurance-desc">
+                    为模壳体系等创新结构体系的模块连接提供专业保障方案
+                </p>
+                <div class="insurance-details">
+                    <div class="detail-item">
+                        <span class="detail-label">承保范围：</span>
+                        模块连接
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">基础费率：</span>
+                        0.8%
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">最高赔付：</span>
+                        1000万
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">保障期限：</span>
+                        3年
+                    </div>
+                </div>
+                <a href="#" class="action-btn">立即投保</a>
+            </div>
+        </div>
+
+        <!-- 智能推荐区域 -->
+        <div class="recommendations">
+            <h2>基于您的技术方案推荐</h2>
+            <div class="recommendation-list">
+                <div class="recommendation-item">
+                    <h4>模壳体系 → 模块连接质量险</h4>
+                    <p>根据您选择的模壳体系结构，推荐配套的保险方案</p>
+                    <div class="tags">
+                        <span class="tag">匹配度98%</span>
+                        <span class="tag">热门产品</span>
+                    </div>
+                </div>
+                <!-- 更多推荐... -->
+            </div>
+        </div>
+
+        <!-- 费率详情 -->
+        <div class="recommendations">
+            <h2>费率标准</h2>
+            <table class="rate-table">
+                <thead>
+                    <tr>
+                        <th>保险类型</th>
+                        <th>基础费率</th>
+                        <th>风险系数</th>
+                        <th>最终费率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>装配式节点施工缺陷险</td>
+                        <td>0.5%</td>
+                        <td>0.8-1.2</td>
+                        <td>0.4%-0.6%</td>
+                    </tr>
+                    <tr>
+                        <td>模块连接质量险</td>
+                        <td>0.8%</td>
+                        <td>0.9-1.5</td>
+                        <td>0.72%-1.2%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 移动端导航菜单
+        function initResponsiveNav() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('nav ul');
+            const overlay = document.querySelector('.overlay');
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                    overlay.style.display = navLinks.classList.contains('active') ? 'block' : 'none';
+                });
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    menuToggle.classList.remove('active');
+                    navLinks.classList.remove('active');
+                    this.style.display = 'none';
+                });
+            }
+        }
+
+        // 滚动时导航栏效果
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initResponsiveNav();
+        });
+
+        // 保险产品卡片交互
+        document.querySelectorAll('.insurance-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // 投保按钮点击处理
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const insuranceTitle = this.closest('.insurance-card').querySelector('.insurance-title').textContent;
+                alert(`正在为您办理${insuranceTitle}的投保手续...`);
+            });
+        });
+    </script>
+</body>
+</html> 

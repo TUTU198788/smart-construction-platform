@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI联合设计中心 - 智建云链</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 全局样式 */
+        :root {
+            --primary-color: #2A5CAA; /* 主蓝色 */
+            --secondary-color: #1E3D6B; /* 深蓝色 */
+            --accent-color: #4A90E2; /* 浅蓝色 */
+            --background-color: #f5f5f5; /* 淡灰背景 */
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --border-color: #ddd;
+            --success-color: #4CAF50;
+            --warning-color: #FFC107;
+            --error-color: #f44336;
+            --tech-blue: #2A5CAA; /* 主蓝色 */
+            --tech-light-blue: #4A90E2; /* 浅蓝色 */
+            --tech-dark-blue: #1E3D6B; /* 深蓝色 */
+            --tech-gradient: linear-gradient(135deg, #2A5CAA 0%, #4A90E2 100%); /* 蓝色渐变 */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+            padding-top: 60px;  /* 为固定头部留出空间 */
+        }
+
+        body:before {
+            content: none; /* 移除默认的背景渐变 */
+        }
+
+        /* 顶部导航栏动效 */
+        header {
+            background: var(--tech-gradient);
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 8px 0;
+            background: rgba(42, 92, 170, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* LOGO样式更新 */
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            text-decoration: none;
+            color: white;
+            max-width: 300px; /* 限制LOGO最大宽度 */
+            overflow: visible; /* 确保LOGO完全显示 */
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+            transition: transform 0.5s ease;
+        }
+        
+        .logo:hover svg {
+            transform: rotate(20deg);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap; /* 防止文本换行 */
+        }
+        
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #fff;
+            transition: width 0.3s ease;
+        }
+        
+        .logo:hover .logo-text::after {
+            width: 100%;
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .logo-en {
+            font-size: 12px;
+            margin-left: 0;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        .logo:hover .logo-en {
+            opacity: 1;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            -ms-overflow-style: none;
+        }
+
+        nav ul::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        nav ul::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+            padding: 6px 10px;
+            border-radius: var(--border-radius);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        nav a:hover::after {
+            width: 80%;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        nav a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 30px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .menu-toggle span:nth-child(1) {
+            top: 0;
+        }
+
+        .menu-toggle span:nth-child(2) {
+            top: 9px;
+        }
+
+        .menu-toggle span:nth-child(3) {
+            top: 18px;
+        }
+        
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg);
+            top: 9px;
+        }
+        
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg);
+            top: 9px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* 修改页面内容最大宽度 */
+        .content {
+            max-width: 1200px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        /* AI联合设计中心样式 */
+        .hero-section {
+            background: linear-gradient(135deg, #2A5CAA 0%, #00A0B0 100%);
+            padding: 40px 0;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 30% 50%, rgba(74, 144, 226, 0.3) 0%, transparent 70%),
+                radial-gradient(circle at 70% 50%, rgba(0, 160, 176, 0.3) 0%, transparent 70%);
+            animation: pulse 8s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 3;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .banner-content h2 {
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .banner-content p {
+            font-size: 1.3em;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* 装饰元素 */
+        .decorations, .cloud, .star {
+            display: none;
+        }
+
+        /* 添加与technical_system_services一致的动态效果 */
+        .banner-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* 设计院展示区和设计需求池部分 */
+        .design-institutes, .design-requirements {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* 服务卡片样式 */
+        .institute-card {
+            background: white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0 0 20px 0;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: 100%;
+        }
+
+        .institute-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .institute-image img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .institute-info {
+            padding: 20px;
+        }
+
+        .institute-name {
+            color: #2A5CAA;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .institute-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 要求池表格样式 */
+        .requirements-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .requirements-table th {
+            background: var(--tech-gradient);
+            color: white;
+            font-weight: 500;
+            text-align: left;
+            padding: 12px 15px;
+        }
+
+        .requirements-table td {
+            padding: 12px 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .requirements-table tr:hover {
+            background-color: rgba(74, 144, 226, 0.05);
+        }
+
+        .req-title {
+            color: var(--tech-light-blue);
+            cursor: pointer;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+
+        .req-title:hover {
+            color: var(--tech-blue);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning-color);
+        }
+
+        .status-in-progress {
+            background-color: rgba(30, 144, 255, 0.2);
+            color: var(--tech-light-blue);
+        }
+
+        .status-completed {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--success-color);
+        }
+
+        .req-details {
+            padding: 0 1rem 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .req-details.open {
+            display: block;
+        }
+
+        .details-section {
+            margin-top: 1rem;
+        }
+
+        .details-title {
+            font-weight: bold;
+            color: var(--tech-light-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .details-content {
+            color: var(--tech-blue);
+            line-height: 1.5;
+        }
+
+        /* 筛选和搜索区域 */
+        .filter-search {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--tech-blue);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: var(--tech-blue);
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            .nav-links {
+                position: absolute;
+                right: 0;
+                top: 5rem;
+                background-color: rgba(0, 0, 0, 0.9);
+                flex-direction: column;
+                width: 50%;
+                transform: translateX(100%);
+                transition: transform 0.5s ease-in;
+                padding: 2rem;
+                z-index: 999;
+            }
+
+            .nav-links.active {
+                transform: translateX(0%);
+            }
+
+            .burger {
+                display: block;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .requirements-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-search {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .requirements-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media screen and (max-width: 420px) {
+            .container {
+                padding: 6rem 1rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .search-input {
+                width: 120px;
+            }
+        }
+
+        /* 补充添加section-title样式 */
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #2A5CAA;
+            position: relative;
+            padding-left: 1rem;
+            font-weight: 600;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 70%;
+            background: #2A5CAA;
+            border-radius: 5px;
+        }
+
+        /* 补充卡片网格布局 */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* 添加主标题样式 */
+        .main-title {
+            font-size: 2.2rem;
+            color: var(--tech-dark-blue);
+            text-align: center;
+            margin: 30px 0 10px;
+        }
+        
+        .main-description {
+            text-align: center;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+        }
+        
+        /* 添加按钮样式 */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .primary-btn {
+            background: var(--tech-gradient);
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        /* 统计数字显示 */
+        .hero-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #fff 30%, #e3f2fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* 更新筛选区样式 */
+        .filter-search {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: var(--tech-dark-blue);
+            outline: none;
+            cursor: pointer;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px 10px;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        
+        .search-icon {
+            color: #999;
+            margin-right: 8px;
+        }
+        
+        .search-input {
+            background: none;
+            border: none;
+            color: var(--tech-dark-blue);
+            outline: none;
+            width: 100%;
+            padding: 3px 0;
+        }
+        
+        .requirements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        /* 区域标签样式 */
+        .region-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: rgba(42, 92, 170, 0.1);
+            color: var(--tech-blue);
+            border-radius: 4px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        /* 需求详情弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: var(--error-color);
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: var(--tech-blue);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .requirement-details .req-status {
+            margin-bottom: 15px;
+        }
+
+        .req-info {
+            margin-bottom: 20px;
+        }
+
+        .req-info h3 {
+            font-size: 1.2rem;
+            color: var(--tech-dark-blue);
+            margin-bottom: 8px;
+        }
+
+        .req-info p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 操作按钮样式 */
+        .action-btn {
+            background: transparent;
+            color: var(--tech-blue);
+            border: 1px solid var(--tech-blue);
+            padding: 4px 10px;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: var(--tech-blue);
+            color: white;
+        }
+
+        /* 提示框样式 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            color: #333;
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1100;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error-color);
+        }
+
+        /* 空内容提示 */
+        .empty-message {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            width: 100%;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <svg width="40" height="40" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="25" cy="25" r="20" fill="#2A5CAA"/>
+                    <circle cx="25" cy="25" r="15" fill="none" stroke="#ffffff" stroke-width="2"/>
+                    <circle cx="25" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="10" r="3" fill="#ffffff"/>
+                    <circle cx="40" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="40" r="3" fill="#ffffff"/>
+                    <circle cx="10" cy="25" r="3" fill="#ffffff"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>智建云链</h1>
+                    <p class="logo-en">SmartBuildChain</p>
+                </div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/ai-design.html">AI方案设计</a></li>
+                    <li><a href="/ai-center.html" class="active">AI联合设计中心</a></li>
+                    <li><a href="/technical_system_services.html">技术体系服务</a></li>
+                    <li><a href="/smart-factory.html">数智工厂</a></li>
+                    <li><a href="/industrial-construction.html">工业化建造</a></li>
+                    <li><a href="/insurance-platform.html">工程保险平台</a></li>
+                    <li><a href="/talent-platform.html">产业人才平台</a></li>
+                    <li><a href="/tech-innovation.html">创新技术转化</a></li>
+                    <li><a href="/patent-platform.html">专利协作与维权平台</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="overlay"></div>
+
+    <div class="content">
+        <!-- 主标题区域 -->
+        <h1 class="main-title">AI联合设计中心</h1>
+        <p class="main-description">基于TransBIM平台开发的AI联合设计中心，为工业化建筑系统设计师提供高效便捷的协同设计环境和先进技术工具。</p>
+        
+        <!-- 修改英雄区域 -->
+        <section class="hero-section">
+            <div class="banner-background"></div>
+            <div class="banner-content">
+                <div class="hero-stats">
+                    <div class="stat-box">
+                        <span class="stat-number">25+</span>
+                        <span class="stat-label">合作设计院</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">180+</span>
+                        <span class="stat-label">已完成项目</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">85%</span>
+                        <span class="stat-label">效率提升</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 设计院展示区 -->
+        <section class="design-institutes">
+            <h2 class="section-title">合作设计院</h2>
+            <div class="filter-search">
+                <select class="filter-select" id="regionFilter">
+                    <option value="all">全部区域</option>
+                    <option value="north">华北地区</option>
+                    <option value="east">华东地区</option>
+                    <option value="south">华南地区</option>
+                    <option value="west">西部地区</option>
+                </select>
+                <div class="search-box">
+                    <i class="search-icon fas fa-search"></i>
+                    <input type="text" class="search-input" id="instituteSearch" placeholder="搜索设计院...">
+                </div>
+            </div>
+            <div class="cards-container" id="institutesContainer">
+                <!-- 卡片内容由JavaScript动态生成 -->
+            </div>
+        </section>
+
+        <!-- 设计需求池 -->
+        <section class="design-requirements">
+            <h2 class="section-title">设计需求池</h2>
+            <div class="requirements-header">
+                <div class="filter-search">
+                    <select class="filter-select" id="statusFilter">
+                        <option value="all">全部状态</option>
+                        <option value="pending">待处理</option>
+                        <option value="in-progress">进行中</option>
+                        <option value="completed">已完成</option>
+                    </select>
+                    <div class="search-box">
+                        <i class="search-icon fas fa-search"></i>
+                        <input type="text" class="search-input" id="searchInput" placeholder="搜索需求...">
+                    </div>
+                </div>
+                <button class="btn primary-btn" id="submitReqBtn">提交需求</button>
+            </div>
+            <table class="requirements-table" id="requirementsTable">
+                <thead>
+                    <tr>
+                        <th>需求标题</th>
+                        <th>描述</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="requirementsList">
+                    <!-- 需求列表由JavaScript动态生成 -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <!-- 提交需求模态框 -->
+    <div class="modal" id="requirementModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2 class="modal-title">提交设计需求</h2>
+            <form id="requirementForm">
+                <div class="form-group">
+                    <label for="projectName">项目名称</label>
+                    <input type="text" id="projectName" required>
+                </div>
+                <div class="form-group">
+                    <label for="buildingType">建筑类型</label>
+                    <select id="buildingType" required>
+                        <option value="">请选择</option>
+                        <option value="residential">住宅建筑</option>
+                        <option value="commercial">商业建筑</option>
+                        <option value="industrial">工业建筑</option>
+                        <option value="public">公共建筑</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="description">需求描述</label>
+                    <textarea id="description" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="length">长度 (米)</label>
+                    <input type="number" id="length" min="1" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="width">宽度 (米)</label>
+                    <input type="number" id="width" min="1" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="height">高度 (米)</label>
+                    <input type="number" id="height" min="1" step="0.1" required>
+                </div>
+                <button type="submit" class="submit-btn">提交</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 定义合作设计院数据，增加区域信息
+        const institutes = [
+            {
+                name: "南通装配式建筑与智能结构研究院",
+                description: "专注于装配式建筑研发与设计，拥有国家级专利20余项，在智能建筑结构领域处于领先地位。",
+                image: "https://via.placeholder.com/300x180.png?text=南通研究院",
+                region: "east" // 华东地区
+            },
+            {
+                name: "上海现代建筑设计集团",
+                description: "集建筑设计、咨询、项目管理于一体的综合性设计机构，致力于推动绿色建筑与智能化设计融合。",
+                image: "https://via.placeholder.com/300x180.png?text=上海设计集团",
+                region: "east" // 华东地区
+            },
+            {
+                name: "北京智能建造技术研究所",
+                description: "聚焦建筑产业数字化转型，整合AI与BIM技术，提供全生命周期的建筑智能化解决方案。",
+                image: "https://via.placeholder.com/300x180.png?text=北京研究所",
+                region: "north" // 华北地区
+            },
+            {
+                name: "广州建筑数字化研究中心",
+                description: "专注于建筑领域的数字化转型与创新，推动BIM+AI+IoT技术在工程全生命周期的深度应用。",
+                image: "https://via.placeholder.com/300x180.png?text=广州研究中心",
+                region: "south" // 华南地区
+            },
+            {
+                name: "成都装配式建筑设计院",
+                description: "西部地区装配式建筑技术研发中心，专注于适合西南地区的装配式建筑体系研发。",
+                image: "https://via.placeholder.com/300x180.png?text=成都设计院",
+                region: "west" // 西部地区
+            }
+        ];
+
+        // 设计需求数据
+        let requirements = [
+            {
+                id: 1,
+                title: "承重抗侧分离结构设计",
+                description: "为高层住宅开发承重抗侧分离的优化结构设计方案",
+                status: "pending",
+                techSystem: "承重抗侧分离组合结构体系",
+                report: "通过分离承重与抗侧结构功能，可实现空间布局的灵活性。初步分析表明，该方案可降低材料用量约15%，提高抗震性能约20%。建议采用预制装配式构件，缩短施工周期30%。"
+            },
+            {
+                id: 2,
+                title: "工业厂房柔性布局方案",
+                description: "研发适应多种生产线的柔性空间布局工业厂房设计",
+                status: "in-progress",
+                techSystem: "大跨度轻钢结构体系",
+                report: "采用无柱大跨度轻钢结构，内部空间可根据生产需求灵活分隔。屋盖系统集成了光伏发电与自然采光设计，年均可节省能源消耗30%以上。模块化设计使厂房扩建便捷，未来适应性强。"
+            },
+            {
+                id: 3,
+                title: "超低能耗居住建筑设计",
+                description: "适用于寒冷地区的超低能耗被动式居住建筑设计方案",
+                status: "completed",
+                techSystem: "被动式超低能耗集成体系",
+                report: "采用高性能外围护结构与气密性处理，结合高效新风热回收系统，建筑能耗可降低75%以上。通过BIM+AI优化设计，提高建筑部品的标准化与装配率，可减少建筑垃圾30%，缩短施工周期20%。"
+            }
+        ];
+
+        // DOM元素
+        const institutesContainer = document.getElementById('institutesContainer');
+        const requirementsList = document.getElementById('requirementsList');
+        const statusFilter = document.getElementById('statusFilter');
+        const regionFilter = document.getElementById('regionFilter');
+        const searchInput = document.getElementById('searchInput');
+        const instituteSearch = document.getElementById('instituteSearch');
+        const submitReqBtn = document.getElementById('submitReqBtn');
+        const requirementModal = document.getElementById('requirementModal');
+        const closeModal = document.getElementById('closeModal');
+        const requirementForm = document.getElementById('requirementForm');
+        const burger = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('nav ul');
+
+        // 渲染设计院卡片
+        function renderInstitutes(instituteList = institutes) {
+            institutesContainer.innerHTML = '';
+            
+            if (instituteList.length === 0) {
+                institutesContainer.innerHTML = '<div class="empty-message">没有找到符合条件的设计院</div>';
+                return;
+            }
+            
+            instituteList.forEach(institute => {
+                const card = document.createElement('div');
+                card.className = 'institute-card';
+                
+                // 为每个卡片添加区域标签样式类
+                card.classList.add(`region-${institute.region}`);
+                
+                card.innerHTML = `
+                    <div class="institute-image">
+                        <img src="${institute.image}" alt="${institute.name}">
+                    </div>
+                    <div class="institute-info">
+                        <h3 class="institute-name">${institute.name}</h3>
+                        <p class="institute-desc">${institute.description}</p>
+                        <div class="institute-region">
+                            <span class="region-tag">${getRegionName(institute.region)}</span>
+                        </div>
+                    </div>
+                `;
+                institutesContainer.appendChild(card);
+            });
+        }
+        
+        // 获取区域名称的辅助函数
+        function getRegionName(regionCode) {
+            const regionMap = {
+                'north': '华北地区',
+                'east': '华东地区',
+                'south': '华南地区',
+                'west': '西部地区'
+            };
+            return regionMap[regionCode] || '未指定区域';
+        }
+
+        // 区域筛选功能
+        function filterInstitutes() {
+            const regionValue = regionFilter.value;
+            const searchValue = instituteSearch.value.toLowerCase();
+            
+            let filteredInstitutes = institutes;
+            
+            if (regionValue !== 'all') {
+                filteredInstitutes = filteredInstitutes.filter(institute => 
+                    institute.region === regionValue
+                );
+            }
+            
+            if (searchValue) {
+                filteredInstitutes = filteredInstitutes.filter(institute => 
+                    institute.name.toLowerCase().includes(searchValue) || 
+                    institute.description.toLowerCase().includes(searchValue)
+                );
+            }
+            
+            renderInstitutes(filteredInstitutes);
+        }
+
+        // 渲染需求列表
+        function renderRequirements(reqs = requirements) {
+            requirementsList.innerHTML = '';
+            
+            if (reqs.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `<td colspan="4" style="text-align: center;">没有找到符合条件的需求</td>`;
+                requirementsList.appendChild(emptyRow);
+                return;
+            }
+            
+            reqs.forEach(req => {
+                const row = document.createElement('tr');
+                row.dataset.id = req.id;
+                
+                let statusClass = '';
+                let statusText = '';
+                
+                switch (req.status) {
+                    case 'pending':
+                        statusClass = 'status-pending';
+                        statusText = '待处理';
+                        break;
+                    case 'in-progress':
+                        statusClass = 'status-in-progress';
+                        statusText = '进行中';
+                        break;
+                    case 'completed':
+                        statusClass = 'status-completed';
+                        statusText = '已完成';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td><span class="req-title" data-id="${req.id}">${req.title}</span></td>
+                    <td>${req.description}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn action-btn view-btn" data-id="${req.id}">查看</button>
+                    </td>
+                `;
+                
+                requirementsList.appendChild(row);
+            });
+            
+            // 添加查看按钮事件
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const reqId = this.dataset.id;
+                    const requirement = requirements.find(r => r.id == reqId);
+                    
+                    if (requirement) {
+                        showRequirementDetails(requirement);
+                    }
+                });
+            });
+        }
+        
+        // 显示需求详情
+        function showRequirementDetails(requirement) {
+            // 如果有现有模态框则使用，否则创建新的
+            let detailModal = document.getElementById('detailModal');
+            
+            if (!detailModal) {
+                detailModal = document.createElement('div');
+                detailModal.id = 'detailModal';
+                detailModal.className = 'modal';
+                document.body.appendChild(detailModal);
+            }
+            
+            // 设置模态框内容
+            let statusText = '';
+            let statusClass = '';
+            
+            switch (requirement.status) {
+                case 'pending':
+                    statusClass = 'status-pending';
+                    statusText = '待处理';
+                    break;
+                case 'in-progress':
+                    statusClass = 'status-in-progress';
+                    statusText = '进行中';
+                    break;
+                case 'completed':
+                    statusClass = 'status-completed';
+                    statusText = '已完成';
+                    break;
+            }
+            
+            detailModal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close-modal" id="closeDetailModal">&times;</span>
+                    <h2 class="modal-title">${requirement.title}</h2>
+                    <div class="requirement-details">
+                        <div class="req-status">
+                            状态：<span class="status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="req-info">
+                            <h3>需求描述</h3>
+                            <p>${requirement.description}</p>
+                        </div>
+                        <div class="req-info">
+                            <h3>技术体系</h3>
+                            <p>${requirement.techSystem}</p>
+                        </div>
+                        <div class="req-info">
+                            <h3>方案报告</h3>
+                            <p>${requirement.report}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 显示模态框
+            detailModal.style.display = 'flex';
+            
+            // 添加关闭事件
+            document.getElementById('closeDetailModal').addEventListener('click', function() {
+                detailModal.style.display = 'none';
+            });
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(e) {
+                if (e.target === detailModal) {
+                    detailModal.style.display = 'none';
+                }
+            });
+        }
+
+        // 筛选需求
+        function filterRequirements() {
+            const statusValue = statusFilter.value;
+            const searchValue = searchInput.value.toLowerCase();
+            
+            let filteredReqs = requirements;
+            
+            if (statusValue !== 'all') {
+                filteredReqs = filteredReqs.filter(req => req.status === statusValue);
+            }
+            
+            if (searchValue) {
+                filteredReqs = filteredReqs.filter(req => 
+                    req.title.toLowerCase().includes(searchValue) || 
+                    req.description.toLowerCase().includes(searchValue)
+                );
+            }
+            
+            renderRequirements(filteredReqs);
+        }
+
+        // 提交新需求
+        function submitNewRequirement(e) {
+            e.preventDefault();
+            
+            const newRequirement = {
+                id: requirements.length + 1,
+                title: document.getElementById('projectName').value,
+                description: document.getElementById('description').value,
+                status: 'pending',
+                techSystem: `${document.getElementById('buildingType').options[document.getElementById('buildingType').selectedIndex].text}优化设计体系`,
+                report: `初步分析显示该项目适合采用智能化设计方案。建筑规模：${document.getElementById('length').value}m×${document.getElementById('width').value}m×${document.getElementById('height').value}m，建议采用模块化设计，推荐使用装配式结构，可缩短工期约25%，降低成本约15%。`
+            };
+            
+            requirements.push(newRequirement);
+            requirementModal.style.display = 'none';
+            requirementForm.reset();
+            
+            // 重新渲染需求列表
+            filterRequirements();
+            
+            // 显示成功提示
+            showToast('需求提交成功！');
+        }
+        
+        // 显示提示消息
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            // 显示动画
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // 3秒后移除
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // 移动端菜单切换
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('nav');
+        const overlay = document.querySelector('.overlay');
+
+        menuToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            nav.classList.toggle('active');
+            overlay.style.display = nav.classList.contains('active') ? 'block' : 'none';
+        });
+
+        overlay.addEventListener('click', function() {
+            menuToggle.classList.remove('active');
+            nav.classList.remove('active');
+            this.style.display = 'none';
+        });
+
+        // 生成动态粒子效果
+        function createParticleEffect() {
+            const banner = document.querySelector('.hero-section');
+            const canvasContainer = document.createElement('canvas');
+            canvasContainer.style.position = 'absolute';
+            canvasContainer.style.top = '0';
+            canvasContainer.style.left = '0';
+            canvasContainer.style.width = '100%';
+            canvasContainer.style.height = '100%';
+            canvasContainer.style.opacity = '0.5';
+            canvasContainer.style.zIndex = '1';
+            banner.appendChild(canvasContainer);
+            
+            const canvas = canvasContainer;
+            const ctx = canvas.getContext('2d');
+            
+            let width = canvas.width = banner.offsetWidth;
+            let height = canvas.height = banner.offsetHeight;
+            
+            // 粒子数组
+            const particles = [];
+            const particleCount = 80;
+            
+            // 定义粒子对象
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = Math.random() * 2 - 1;
+                    this.vy = Math.random() * 2 - 1;
+                    this.radius = Math.random() * 3 + 1;
+                    this.color = 'rgba(255, 255, 255, 0.6)';
+                }
+                
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    // 边界检测
+                    if (this.x < 0 || this.x > width) this.vx = -this.vx;
+                    if (this.y < 0 || this.y > height) this.vy = -this.vy;
+                }
+                
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+            
+            // 创建粒子
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+            
+            // 绘制粒子并连接
+            function drawParticles() {
+                ctx.clearRect(0, 0, width, height);
+                
+                // 更新和绘制粒子
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                
+                // 连接粒子
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 150) {
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - distance / 150)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                            ctx.closePath();
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(drawParticles);
+            }
+            
+            drawParticles();
+            
+            // 窗口大小改变时重设canvas尺寸
+            window.addEventListener('resize', function() {
+                width = canvas.width = banner.offsetWidth;
+                height = canvas.height = banner.offsetHeight;
+            });
+        }
+
+        // 初始化
+        function init() {
+            createParticleEffect(); // 添加粒子效果
+            renderInstitutes();
+            renderRequirements();
+            
+            // 添加筛选事件监听器
+            statusFilter.addEventListener('change', filterRequirements);
+            searchInput.addEventListener('input', filterRequirements);
+            regionFilter.addEventListener('change', filterInstitutes);
+            instituteSearch.addEventListener('input', filterInstitutes);
+            
+            submitReqBtn.addEventListener('click', function() {
+                requirementModal.style.display = 'flex';
+            });
+            
+            if (closeModal) {
+                closeModal.addEventListener('click', function() {
+                    requirementModal.style.display = 'none';
+                });
+            }
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(e) {
+                if (e.target === requirementModal) {
+                    requirementModal.style.display = 'none';
+                }
+            });
+            
+            if (requirementForm) {
+                requirementForm.addEventListener('submit', submitNewRequirement);
+            }
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', init);
+
+        // 滚动时导航栏效果
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

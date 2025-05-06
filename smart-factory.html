@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数智工厂 - 智建云链</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- 高德地图安全密钥设置 -->
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode: 'e964c17bff0468b1fc147f5becadfa61',
+        }
+    </script>
+    <style>
+        /* 继承基础样式 */
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 400;
+            src: url(https://fonts.gstatic.com/s/notosanssc/v12/k3kXo84MPvpLmixcA63oeALhL4iJ-Q7m8w.woff2) format('woff2');
+        }
+
+        :root {
+            --primary-color: #2A5CAA; /* 主蓝色 */
+            --secondary-color: #1E3D6B; /* 深蓝色 */
+            --accent-color: #4A90E2; /* 浅蓝色 */
+            --background-color: #f5f5f5; /* 淡灰背景 */
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --border-color: #ddd;
+            --success-color: #4CAF50;
+            --warning-color: #FFC107;
+            --error-color: #f44336;
+            --tech-blue: #2A5CAA; /* 主蓝色 */
+            --tech-light-blue: #4A90E2; /* 浅蓝色 */
+            --tech-dark-blue: #1E3D6B; /* 深蓝色 */
+            --tech-gradient: linear-gradient(135deg, #2A5CAA 0%, #4A90E2 100%); /* 蓝色渐变 */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding-top: 60px;
+            background: #f5f5f5;
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 顶部导航栏动效 */
+        header {
+            background: var(--tech-gradient);
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 8px 0;
+            background: rgba(42, 92, 170, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo-image {
+            height: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        /* 内容区域样式调整 */
+        .content-wrapper {
+            margin-top: 40px;
+            padding: 20px 0;
+        }
+
+        /* 主标题样式 */
+        .main-title {
+            font-size: 2.2rem;
+            color: var(--tech-dark-blue);
+            text-align: center;
+            margin: 30px 0 10px;
+        }
+        
+        .main-description {
+            text-align: center;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+        }
+        
+        /* 添加动态背景 */
+        .hero-bg {
+            position: relative;
+            padding: 100px 0;
+            margin: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #2A5CAA 0%, #00A0B0 100%);
+            color: white;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 30% 50%, rgba(74, 144, 226, 0.3) 0%, transparent 70%),
+                radial-gradient(circle at 70% 50%, rgba(0, 160, 176, 0.3) 0%, transparent 70%);
+            animation: pulse 8s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .hero-content .main-title {
+            font-size: 3.5em;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+            margin-bottom: 25px;
+            color: white;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+        
+        .hero-content .main-description {
+            font-size: 1.6em;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 1);
+            margin-top: 15px;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 统一section标题样式 */
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--tech-blue);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: var(--tech-blue);
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+
+        /* 工厂卡片网格 */
+        .factory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .factory-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+            perspective: 1000px;
+            height: 250px; /* 设置固定高度 */
+        }
+
+        .factory-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .factory-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2A5CAA;
+            margin-bottom: 10px;
+        }
+
+        .factory-info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        /* 创新产品标签样式 */
+        .innovation-products {
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .product-tag {
+            background: #e3f2fd;
+            color: #2A5CAA;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .factory-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 地图容器 */
+        #map {
+            height: 400px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+
+        /* 区域筛选器 */
+        .region-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .region-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .region-btn.active {
+            background: #2A5CAA;
+            color: white;
+            border-color: #2A5CAA;
+        }
+
+        /* 详情浮层 */
+        .factory-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* 产能图表 */
+        .chart-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        #capacityChart {
+            height: 400px;
+        }
+
+        /* 设备列表 */
+        .equipment-list {
+            margin-top: 20px;
+        }
+
+        .equipment-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .equipment-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .equipment-name i {
+            color: #2A5CAA;
+        }
+
+        .equipment-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .status-active {
+            background: #e8f5e9;
+            color: #4CAF50;
+        }
+
+        .status-maintenance {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+
+        /* 工厂卡片样式 */
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: left;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .factory-card:hover .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .production-lines {
+            margin-top: 20px;
+        }
+
+        .line-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .line-item:last-child {
+            border-bottom: none;
+        }
+
+        .line-name {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .line-count {
+            color: #2A5CAA;
+            font-weight: bold;
+        }
+
+        /* 地图容器样式 */
+        .map-container {
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: white;
+            padding: 20px;
+        }
+
+        #map {
+            width: 100%;
+            min-height: 400px;
+            border-radius: 8px;
+        }
+
+        /* 统一卡片组件样式 */
+        .factory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .factory-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            perspective: 1000px;
+            height: 280px; /* 设置固定高度 */
+        }
+
+        .factory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        /* 统一图表容器样式 */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .chart-container h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--tech-blue);
+            font-size: 1.5rem;
+        }
+
+        #capacityChart {
+            height: 400px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            -ms-overflow-style: none;
+        }
+
+        nav ul::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        nav ul::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+            padding: 6px 10px;
+            border-radius: var(--border-radius);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        nav a:hover::after {
+            width: 80%;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        nav a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 30px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .menu-toggle span:nth-child(1) {
+            top: 0;
+        }
+
+        .menu-toggle span:nth-child(2) {
+            top: 9px;
+        }
+
+        .menu-toggle span:nth-child(3) {
+            top: 18px;
+        }
+        
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg);
+            top: 9px;
+        }
+        
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg);
+            top: 9px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            nav ul {
+                position: absolute;
+                right: 0;
+                top: 60px;
+                background-color: rgba(0, 0, 0, 0.9);
+                flex-direction: column;
+                width: 50%;
+                transform: translateX(100%);
+                transition: transform 0.5s ease-in;
+                padding: 2rem;
+                z-index: 999;
+            }
+
+            nav ul.active {
+                transform: translateX(0%);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .factory-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 区域筛选器样式 */
+        .region-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .region-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            color: var(--tech-dark-blue);
+        }
+
+        .region-btn.active {
+            background: var(--tech-gradient);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .region-btn:hover:not(.active) {
+            background-color: #f9f9f9;
+            transform: translateY(-2px);
+        }
+
+        /* LOGO样式更新 */
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap;
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .logo-en {
+            font-size: 12px;
+            margin-left: 0;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        a.logo-container:hover .logo-en {
+            opacity: 1;
+        }
+
+        /* 增强粒子效果层 */
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        
+        /* 模块跳转链接样式 */
+        .module-connection {
+            margin-bottom: 40px;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .connection-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--tech-blue);
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .connection-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--tech-gradient);
+            border-radius: 3px;
+        }
+        
+        .connection-desc {
+            color: #666;
+            margin-bottom: 25px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .module-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .module-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--tech-dark-blue);
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            width: 160px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .module-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--tech-gradient);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .module-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(42, 92, 170, 0.2);
+        }
+        
+        .module-link:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .module-link i {
+            font-size: 2.5rem;
+            color: var(--tech-blue);
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .module-link:hover i {
+            transform: scale(1.1);
+        }
+        
+        .module-link span {
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        @media screen and (max-width: 768px) {
+            .module-links {
+                gap: 10px;
+            }
+            
+            .module-link {
+                width: 120px;
+                padding: 10px 15px;
+            }
+            
+            .module-link i {
+                font-size: 2rem;
+            }
+            
+            .module-link span {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header>
+        <nav>
+            <a href="/" class="logo-container">
+                <svg width="40" height="40" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="25" cy="25" r="20" fill="#2A5CAA"/>
+                    <circle cx="25" cy="25" r="15" fill="none" stroke="#ffffff" stroke-width="2"/>
+                    <circle cx="25" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="10" r="3" fill="#ffffff"/>
+                    <circle cx="40" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="40" r="3" fill="#ffffff"/>
+                    <circle cx="10" cy="25" r="3" fill="#ffffff"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>智建云链</h1>
+                    <p class="logo-en">SmartBuildChain</p>
+                </div>
+            </a>
+            <ul>
+                <li><a href="/">首页</a></li>
+                <li><a href="/ai-design.html">AI方案设计</a></li>
+                <li><a href="/ai-center.html">AI联合设计中心</a></li>
+                <li><a href="/smart-factory.html" class="active">数智工厂</a></li>
+                <li><a href="/industrial-construction.html">工业化建造</a></li>
+                <li><a href="/insurance-platform.html">工程保险平台</a></li>
+                <li><a href="/talent-platform.html">产业人才平台</a></li>
+                <li><a href="/tech-innovation.html">创新技术转化</a></li>
+                <li><a href="/patent-platform.html">专利协作与维权平台</a></li>
+            </ul>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <div class="overlay"></div>
+
+    <!-- 动态背景主标题区域 -->
+    <div class="hero-bg" id="hero-section">
+        <div class="hero-content">
+            <h1 class="main-title">数智工厂</h1>
+            <p class="main-description">基于物联网和数字孪生技术，连接全国装配式建筑PC构件工厂，实现资源共享与产能协调</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <!-- 区域筛选 -->
+            <section class="region-section">
+                <h2 class="section-title">工厂分布</h2>
+                <div class="region-filters">
+                    <button class="region-btn active">全部区域</button>
+                    <button class="region-btn">华东</button>
+                    <button class="region-btn">华南</button>
+                    <button class="region-btn">华北</button>
+                    <button class="region-btn">西南</button>
+                </div>
+
+                <!-- 工厂地图 -->
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+            </section>
+
+            <!-- 工厂卡片列表 -->
+            <section class="factories-section">
+                <h2 class="section-title">合作工厂</h2>
+                <div class="factory-grid">
+                    <!-- 工厂卡片内容会由JavaScript动态生成 -->
+                </div>
+            </section>
+
+            <!-- 产能图表 -->
+            <section class="capacity-section">
+                <h2 class="section-title">产能分析</h2>
+                <div class="chart-container">
+                    <div id="capacityChart"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 工厂详情浮层 -->
+    <div class="factory-modal" id="factoryModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>天津工业化建筑有限公司</h2>
+            <div class="equipment-list">
+                <div class="equipment-item">
+                    <div class="equipment-name">
+                        <i class="fas fa-robot"></i>
+                        自动布料机
+                    </div>
+                    <span class="equipment-status status-active">运行中</span>
+                </div>
+                <div class="equipment-item">
+                    <div class="equipment-name">
+                        <i class="fas fa-cog"></i>
+                        养护窑
+                    </div>
+                    <span class="equipment-status status-maintenance">维护中</span>
+                </div>
+                <!-- 更多设备... -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 检查高德地图API是否加载成功
+        function checkAMapLoaded() {
+            return typeof AMap !== 'undefined';
+        }
+
+        // 尝试加载高德地图
+        function tryLoadAMap() {
+            if (!checkAMapLoaded()) {
+                console.log('尝试重新加载高德地图...');
+                const script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'https://webapi.amap.com/maps?v=2.0&key=e5be159f0a02ee635f5d2a91a8357b5c&plugin=AMap.Scale,AMap.ToolBar&callback=initMapWhenReady';
+                document.body.appendChild(script);
+                return false;
+            }
+            return true;
+        }
+
+        // 生成动态粒子效果
+        function createParticleEffect() {
+            const banner = document.getElementById('hero-section');
+            
+            // 创建粒子容器
+            const particlesContainer = document.createElement('div');
+            particlesContainer.className = 'particles-container';
+            banner.appendChild(particlesContainer);
+            
+            const canvasContainer = document.createElement('canvas');
+            canvasContainer.style.position = 'absolute';
+            canvasContainer.style.top = '0';
+            canvasContainer.style.left = '0';
+            canvasContainer.style.width = '100%';
+            canvasContainer.style.height = '100%';
+            canvasContainer.style.opacity = '0.7';
+            particlesContainer.appendChild(canvasContainer);
+            
+            const canvas = canvasContainer;
+            const ctx = canvas.getContext('2d');
+            
+            let width = canvas.width = banner.offsetWidth;
+            let height = canvas.height = banner.offsetHeight;
+            
+            // 粒子数组
+            const particles = [];
+            const particleCount = 150;
+            
+            // 定义粒子对象
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = Math.random() * 2 - 1;
+                    this.vy = Math.random() * 2 - 1;
+                    this.radius = Math.random() * 4 + 1.5;
+                    this.color = 'rgba(255, 255, 255, 0.8)';
+                }
+                
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    // 边界检测
+                    if (this.x < 0 || this.x > width) this.vx = -this.vx;
+                    if (this.y < 0 || this.y > height) this.vy = -this.vy;
+                }
+                
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+            
+            // 创建粒子
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+            
+            // 绘制粒子并连接
+            function drawParticles() {
+                ctx.clearRect(0, 0, width, height);
+                
+                // 更新和绘制粒子
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                
+                // 连接粒子
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 180) {
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 * (1 - distance / 180)})`;
+                            ctx.lineWidth = 0.8;
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                            ctx.closePath();
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(drawParticles);
+            }
+            
+            drawParticles();
+            
+            // 窗口大小改变时重设canvas尺寸
+            window.addEventListener('resize', function() {
+                width = canvas.width = banner.offsetWidth;
+                height = canvas.height = banner.offsetHeight;
+            });
+        }
+
+        // 地图加载就绪后初始化
+        function initMapWhenReady() {
+            console.log('高德地图API加载完成');
+            initMap();
+        }
+
+        // 初始化地图
+        function initMap() {
+            try {
+                // 添加地图加载状态指示器
+                document.getElementById('map').innerHTML = '<div style="text-align:center;padding:40px;color:#666;">地图加载中...</div>';
+                
+                // 确认API已加载
+                if (!checkAMapLoaded()) {
+                    setTimeout(() => {
+                        if (tryLoadAMap()) {
+                            initMap();
+                        }
+                    }, 1000);
+                    return;
+                }
+                
+                const map = new AMap.Map('map', {
+                    center: [116.397428, 39.90923],   // 中国中心位置
+                    zoom: 4                          // 适当缩小以显示全国范围
+                });
+
+                // 扩展工厂位置数据，每个主要省份添加两家工厂
+                const factories = [
+                    // 华北地区 - 北京
+                    {
+                        position: [116.4074, 39.9042],
+                        title: '北京城建智能建筑科技有限公司',
+                        address: '北京市朝阳区建国路88号',
+                        tel: '010-12345678',
+                        region: 'north'
+                    },
+                    {
+                        position: [116.3352, 39.7892],
+                        title: '北京装配式建筑产业集团',
+                        address: '北京市大兴区经济开发区科创十三街18号',
+                        tel: '010-87654321',
+                        region: 'north'
+                    },
+                    
+                    // 华北地区 - 天津
+                    {
+                        position: [117.4219, 39.4189],
+                        title: '天津工业化建筑有限公司',
+                        address: '天津市西青区兴华道18号',
+                        tel: '022-12345678',
+                        region: 'north'
+                    },
+                    {
+                        position: [117.2010, 39.0836],
+                        title: '天津宝钢绿建科技有限公司',
+                        address: '天津市滨海新区临港经济区渤海28路866号',
+                        tel: '022-87654321',
+                        region: 'north'
+                    },
+                    
+                    // 华东地区 - 江苏
+                    {
+                        position: [120.89, 31.98],
+                        title: '南通际铨建筑科技有限公司',
+                        address: '江苏省南通市通州区平潮镇通扬路88号',
+                        tel: '0513-12345678',
+                        region: 'east'
+                    },
+                    {
+                        position: [118.7971, 32.0584],
+                        title: '南京长江都市建筑工业有限公司',
+                        address: '江苏省南京市江北新区浦口经济开发区',
+                        tel: '025-83521479',
+                        region: 'east'
+                    },
+                    
+                    // 华东地区 - 上海
+                    {
+                        position: [121.4737, 31.2304],
+                        title: '上海建工建设产业化有限公司',
+                        address: '上海市宝山区蕴川路1409号',
+                        tel: '021-56789012',
+                        region: 'east'
+                    },
+                    {
+                        position: [121.5966, 31.3009],
+                        title: '上海城建预制构件有限公司',
+                        address: '上海市浦东新区惠南镇拱极路3333号',
+                        tel: '021-58765432',
+                        region: 'east'
+                    },
+                    
+                    // 华南地区 - 广东
+                    {
+                        position: [113.2644, 23.1291],
+                        title: '广州建工绿建科技有限公司',
+                        address: '广东省广州市黄埔区科学城光谱中路11号',
+                        tel: '020-12345678',
+                        region: 'south'
+                    },
+                    {
+                        position: [113.9384, 22.5225],
+                        title: '深圳市华阳国际工程产业化有限公司',
+                        address: '广东省深圳市南山区深南大道9789号',
+                        tel: '0755-12345678',
+                        region: 'south'
+                    },
+                    
+                    // 华南地区 - 福建
+                    {
+                        position: [119.3000, 26.0799],
+                        title: '福建建工高新建材有限公司',
+                        address: '福建省福州市马尾区江滨东大道108号',
+                        tel: '0591-38105678',
+                        region: 'south'
+                    },
+                    {
+                        position: [118.1020, 24.4893],
+                        title: '厦门市建设发展集团智能建造有限公司',
+                        address: '福建省厦门市同安区同集北路399号',
+                        tel: '0592-7654321',
+                        region: 'south'
+                    },
+                    
+                    // 西南地区 - 四川
+                    {
+                        position: [104.0665, 30.5723],
+                        title: '成都建工集团装配式建筑有限公司',
+                        address: '四川省成都市新都区新都街道工业大道东段138号',
+                        tel: '028-12345678',
+                        region: 'west'
+                    },
+                    {
+                        position: [104.2861, 30.6171],
+                        title: '四川华西集团装配式建筑科技有限公司',
+                        address: '四川省成都市天府新区华阳街道华府大道88号',
+                        tel: '028-87654321',
+                        region: 'west'
+                    },
+                    
+                    // 西南地区 - 重庆
+                    {
+                        position: [106.5528, 29.5627],
+                        title: '重庆建工高新建材有限公司',
+                        address: '重庆市沙坪坝区土主镇月台路18号',
+                        tel: '023-12345678',
+                        region: 'west'
+                    },
+                    {
+                        position: [106.7212, 29.8343],
+                        title: '重庆钢结构产业有限公司',
+                        address: '重庆市两江新区水土高新技术产业园云汉大道5号',
+                        tel: '023-98765432',
+                        region: 'west'
+                    }
+                ];
+
+                // 为所有工厂创建一个特定样式的标记
+                const createFactoryMarker = (factory) => {
+                    return new AMap.Marker({
+                        position: factory.position,
+                        title: factory.title,
+                        icon: new AMap.Icon({
+                            // 使用自定义图标，或者默认图标
+                            size: new AMap.Size(25, 34),
+                            imageSize: new AMap.Size(25, 34),
+                            image: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png'
+                        }),
+                        offset: new AMap.Pixel(-13, -34)
+                    });
+                };
+
+                // 添加所有工厂标记
+                factories.forEach(factory => {
+                    const marker = createFactoryMarker(factory);
+
+                    // 创建信息窗体
+                    const infoWindow = new AMap.InfoWindow({
+                        content: `
+                            <div style="padding:10px; max-width: 300px;">
+                                <h4 style="margin:0 0 5px; color:#2A5CAA; font-size:16px;">${factory.title}</h4>
+                                <p style="margin:0; line-height:1.5; font-size:13px;"><span style="color:#666;">地址：</span>${factory.address}</p>
+                                <p style="margin:0; line-height:1.5; font-size:13px;"><span style="color:#666;">联系电话：</span>${factory.tel}</p>
+                            </div>
+                        `,
+                        offset: new AMap.Pixel(0, -30),
+                        shadow: true,
+                        closeWhenClickMap: true
+                    });
+
+                    // 点击标记显示信息窗体
+                    marker.on('click', () => {
+                        infoWindow.open(map, marker.getPosition());
+                    });
+
+                    map.add(marker);
+                });
+
+                // 自适应显示所有标记
+                if (factories.length > 0) {
+                    const positions = factories.map(factory => factory.position);
+                    map.setFitView(null, false, [50, 50, 50, 50]);
+                }
+
+                // 添加地图控件
+                map.addControl(new AMap.ToolBar({
+                    position: 'RB'
+                }));
+                map.addControl(new AMap.Scale());
+
+            } catch (error) {
+                console.error('地图初始化失败:', error);
+                document.getElementById('map').innerHTML = '<div style="text-align:center;padding:40px;color:#f44336;"><i class="fas fa-exclamation-triangle"></i> 地图加载失败，请检查网络连接或刷新重试</div>';
+                
+                // 添加手动刷新按钮
+                const refreshBtn = document.createElement('button');
+                refreshBtn.innerText = '重新加载地图';
+                refreshBtn.style.padding = '8px 16px';
+                refreshBtn.style.margin = '10px auto';
+                refreshBtn.style.display = 'block';
+                refreshBtn.style.backgroundColor = '#2A5CAA';
+                refreshBtn.style.color = 'white';
+                refreshBtn.style.border = 'none';
+                refreshBtn.style.borderRadius = '4px';
+                refreshBtn.style.cursor = 'pointer';
+                refreshBtn.onclick = tryLoadAMap;
+                document.getElementById('map').appendChild(refreshBtn);
+            }
+        }
+
+        // 创建工厂卡片
+        function initFactoryCards() {
+            const factoryGrid = document.querySelector('.factory-grid');
+            if (!factoryGrid) return;
+            
+            // 清空现有内容
+            factoryGrid.innerHTML = '';
+            
+            // 工厂数据 - 显示8家主要工厂
+            const displayFactories = [
+                {
+                    id: 1,
+                    name: '北京城建智能建筑科技有限公司',
+                    info: '主营：装配式混凝土构件、钢结构系统<br>地址：北京市朝阳区建国路88号',
+                    products: ['预制墙板', '叠合楼板', '预制楼梯', '预制阳台', 'PC构件'],
+                    stats: {
+                        utilization: '92%',
+                        capacity: '18000m³'
+                    },
+                    production: {
+                        lines: 3,
+                        fixed: 6,
+                        prestressed: 2,
+                        steel: 4
+                    },
+                    region: 'north'
+                },
+                {
+                    id: 2,
+                    name: '上海建工建设产业化有限公司',
+                    info: '主营：装配式建筑PC构件、装配式内装<br>地址：上海市宝山区蕴川路1409号',
+                    products: ['TY板', 'TF板', '叠合剪力墙', '预制柱', '整体厨卫'],
+                    stats: {
+                        utilization: '94%',
+                        capacity: '25000m³'
+                    },
+                    production: {
+                        lines: 4,
+                        fixed: 8,
+                        prestressed: 4,
+                        steel: 6
+                    },
+                    region: 'east'
+                },
+                {
+                    id: 3,
+                    name: '广州建工绿建科技有限公司',
+                    info: '主营：装配式建筑、铝模系统<br>地址：广东省广州市黄埔区科学城光谱中路11号',
+                    products: ['PC墙板', 'PC楼梯', '叠合梁', '铝模系统', '装配式内隔墙'],
+                    stats: {
+                        utilization: '89%',
+                        capacity: '22000m³'
+                    },
+                    production: {
+                        lines: 3,
+                        fixed: 5,
+                        prestressed: 3,
+                        steel: 4
+                    },
+                    region: 'south'
+                },
+                {
+                    id: 4,
+                    name: '南通际铨建筑科技有限公司',
+                    info: '主营：装配式建筑PC构件、叠合板<br>地址：江苏省南通市通州区平潮镇通扬路88号',
+                    products: ['TY板', 'TF板', 'TM板', '钢骨柱', '免涂装梁', 'UHPC支撑', '梁板一体化'],
+                    stats: {
+                        utilization: '95%',
+                        capacity: '15000m³'
+                    },
+                    production: {
+                        lines: 2,
+                        fixed: 4,
+                        prestressed: 4,
+                        steel: 2
+                    },
+                    region: 'east'
+                },
+                {
+                    id: 5,
+                    name: '成都建工集团装配式建筑有限公司',
+                    info: '主营：装配式混凝土构件、钢结构<br>地址：四川省成都市新都区新都街道工业大道东段138号',
+                    products: ['预制外墙', '内墙板', '叠合板', '楼梯', '阳台'],
+                    stats: {
+                        utilization: '87%',
+                        capacity: '20000m³'
+                    },
+                    production: {
+                        lines: 3,
+                        fixed: 5,
+                        prestressed: 2,
+                        steel: 3
+                    },
+                    region: 'west'
+                },
+                {
+                    id: 6,
+                    name: '天津工业化建筑有限公司',
+                    info: '主营：装配式建筑PC构件<br>地址：天津市西青区兴华道18号',
+                    products: ['TY板', 'TM板', '钢骨柱', '免涂装梁', 'UHPC支撑'],
+                    stats: {
+                        utilization: '98%',
+                        capacity: '15000m³'
+                    },
+                    production: {
+                        lines: 3,
+                        fixed: 6,
+                        prestressed: 3,
+                        steel: 3
+                    },
+                    region: 'north'
+                },
+                {
+                    id: 7,
+                    name: '深圳市华阳国际工程产业化有限公司',
+                    info: '主营：装配式建筑设计与制造<br>地址：广东省深圳市南山区深南大道9789号',
+                    products: ['预制外挂墙板', '叠合楼板', '预制楼梯', '整体卫浴', 'BIM设计服务'],
+                    stats: {
+                        utilization: '96%',
+                        capacity: '12000m³'
+                    },
+                    production: {
+                        lines: 2,
+                        fixed: 4,
+                        prestressed: 1,
+                        steel: 3
+                    },
+                    region: 'south'
+                },
+                {
+                    id: 8,
+                    name: '重庆建工高新建材有限公司',
+                    info: '主营：预制构件、新型建材<br>地址：重庆市沙坪坝区土主镇月台路18号',
+                    products: ['预制剪力墙', '预制叠合板', '装配式楼梯', '钢筋桁架楼承板', '轻质隔墙板'],
+                    stats: {
+                        utilization: '90%',
+                        capacity: '18000m³'
+                    },
+                    production: {
+                        lines: 3,
+                        fixed: 5,
+                        prestressed: 2,
+                        steel: 4
+                    },
+                    region: 'west'
+                }
+            ];
+            
+            // 创建工厂卡片
+            displayFactories.forEach(factory => {
+                const card = document.createElement('div');
+                card.className = 'factory-card';
+                card.dataset.id = factory.id;
+                card.dataset.region = factory.region;
+                
+                // 创建卡片内容
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="factory-name">${factory.name}</div>
+                            <div class="factory-info">${factory.info}</div>
+                            <div class="innovation-products">
+                                ${factory.products.map(product => `<span class="product-tag">${product}</span>`).join('')}
+                            </div>
+                            <div class="factory-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">${factory.stats.utilization}</div>
+                                    <div class="stat-label">设备利用率</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${factory.stats.capacity}</div>
+                                    <div class="stat-label">月产能</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <h3>生产线配置</h3>
+                            <div class="production-lines">
+                                <div class="line-item">
+                                    <span class="line-name">流水线</span>
+                                    <span class="line-count">${factory.production.lines}条</span>
+                                </div>
+                                <div class="line-item">
+                                    <span class="line-name">固定线</span>
+                                    <span class="line-count">${factory.production.fixed}条</span>
+                                </div>
+                                <div class="line-item">
+                                    <span class="line-name">预应力线</span>
+                                    <span class="line-count">${factory.production.prestressed}条</span>
+                                </div>
+                                <div class="line-item">
+                                    <span class="line-name">钢筋线</span>
+                                    <span class="line-count">${factory.production.steel}条</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                factoryGrid.appendChild(card);
+            });
+            
+            // 为卡片添加点击事件
+            document.querySelectorAll('.factory-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const factoryId = this.dataset.id;
+                    const factory = displayFactories.find(f => f.id == factoryId);
+                    if (factory) {
+                        showFactoryDetails(factory);
+                    }
+                });
+            });
+        }
+        
+        // 显示工厂详情
+        function showFactoryDetails(factory) {
+            const modal = document.getElementById('factoryModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            modalContent.innerHTML = `
+                <span class="close-btn">&times;</span>
+                <h2>${factory.name}</h2>
+                <div class="factory-detail-info">
+                    <p>${factory.info.replace('<br>', ' ')}</p>
+                </div>
+                <h3>主要产品</h3>
+                <div class="factory-products">
+                    ${factory.products.map(product => `<span class="product-tag">${product}</span>`).join('')}
+                </div>
+                <h3>设备清单</h3>
+                <div class="equipment-list">
+                    <div class="equipment-item">
+                        <div class="equipment-name">
+                            <i class="fas fa-robot"></i>
+                            自动布料机
+                        </div>
+                        <span class="equipment-status status-active">运行中</span>
+                    </div>
+                    <div class="equipment-item">
+                        <div class="equipment-name">
+                            <i class="fas fa-cog"></i>
+                            养护窑
+                        </div>
+                        <span class="equipment-status status-active">运行中</span>
+                    </div>
+                    <div class="equipment-item">
+                        <div class="equipment-name">
+                            <i class="fas fa-cogs"></i>
+                            钢筋加工设备
+                        </div>
+                        <span class="equipment-status status-active">运行中</span>
+                    </div>
+                    <div class="equipment-item">
+                        <div class="equipment-name">
+                            <i class="fas fa-truck"></i>
+                            模台翻转机
+                        </div>
+                        <span class="equipment-status status-maintenance">维护中</span>
+                    </div>
+                </div>
+                <h3>生产能力</h3>
+                <div class="capacity-info">
+                    <p>月产能: <strong>${factory.stats.capacity}</strong></p>
+                    <p>设备利用率: <strong>${factory.stats.utilization}</strong></p>
+                </div>
+            `;
+            
+            // 显示模态框
+            modal.style.display = 'block';
+            
+            // 添加关闭按钮事件
+            const closeBtn = modalContent.querySelector('.close-btn');
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // 点击浮层外部关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+        }
+
+        // 区域筛选功能
+        function initRegionFilter() {
+            const regionBtns = document.querySelectorAll('.region-btn');
+            const factoryCards = document.querySelectorAll('.factory-card');
+            
+            regionBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 更新按钮状态
+                    regionBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 获取选择的区域
+                    const selectedRegion = this.textContent.trim();
+                    
+                    // 筛选工厂卡片
+                    factoryCards.forEach(card => {
+                        if (selectedRegion === '全部区域') {
+                            card.style.display = 'block';
+                        } else if (selectedRegion === '华东' && card.dataset.region === 'east') {
+                            card.style.display = 'block';
+                        } else if (selectedRegion === '华南' && card.dataset.region === 'south') {
+                            card.style.display = 'block';
+                        } else if (selectedRegion === '华北' && card.dataset.region === 'north') {
+                            card.style.display = 'block';
+                        } else if (selectedRegion === '西南' && card.dataset.region === 'west') {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        }
+
+        // 产能分析图表
+        function initCapacityChart() {
+            const chart = echarts.init(document.getElementById('capacityChart'));
+            const option = {
+                title: {
+                    text: '各区域月度产能对比',
+                    textStyle: {
+                        color: '#333',
+                        fontSize: 16
+                    },
+                    left: 'center'
+                },
+                legend: {
+                    data: ['华北', '华东', '华南', '西南'],
+                    bottom: 10
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '15%',
+                    top: '15%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月']
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '产能 (m³)'
+                },
+                series: [
+                    {
+                        name: '华北',
+                        type: 'bar',
+                        stack: 'region',
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: [18000, 16500, 21000, 20500, 23000, 25000],
+                        itemStyle: {
+                            color: '#2A5CAA'
+                        }
+                    },
+                    {
+                        name: '华东',
+                        type: 'bar',
+                        stack: 'region',
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: [22000, 20000, 24000, 25000, 27000, 28000],
+                        itemStyle: {
+                            color: '#4A90E2'
+                        }
+                    },
+                    {
+                        name: '华南',
+                        type: 'bar',
+                        stack: 'region',
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: [16000, 15000, 18000, 19500, 21000, 22000],
+                        itemStyle: {
+                            color: '#81C784'
+                        }
+                    },
+                    {
+                        name: '西南',
+                        type: 'bar',
+                        stack: 'region',
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: [15000, 14000, 17000, 18000, 19500, 21000],
+                        itemStyle: {
+                            color: '#FFB74D'
+                        }
+                    }
+                ]
+            };
+            
+            chart.setOption(option);
+            
+            // 响应窗口大小变化
+            window.addEventListener('resize', function() {
+                chart.resize();
+            });
+        }
+
+        // 移动端导航菜单
+        function initResponsiveNav() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('nav ul');
+            const overlay = document.querySelector('.overlay');
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                    overlay.style.display = navLinks.classList.contains('active') ? 'block' : 'none';
+                });
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    menuToggle.classList.remove('active');
+                    navLinks.classList.remove('active');
+                    this.style.display = 'none';
+                });
+            }
+        }
+
+        // 滚动时导航栏效果
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                createParticleEffect(); // 添加粒子效果
+                if (tryLoadAMap()) {
+                    initMap();
+                }
+                initFactoryCards();
+                initCapacityChart();
+                initRegionFilter();
+                initResponsiveNav();
+            } catch (error) {
+                console.error('页面初始化失败:', error);
+                // 显示友好的错误信息
+                if (document.getElementById('map')) {
+                    document.getElementById('map').innerHTML = '<div style="text-align:center;padding:40px;color:#f44336;"><i class="fas fa-exclamation-triangle"></i> 页面加载失败，请刷新重试</div>';
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

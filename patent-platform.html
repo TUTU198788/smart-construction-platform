@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专利协作与维权平台 - 智建云链</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 继承基础样式 */
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 400;
+            src: url(https://fonts.gstatic.com/s/notosanssc/v12/k3kXo84MPvpLmixcA63oeALhL4iJ-Q7m8w.woff2) format('woff2');
+        }
+
+        :root {
+            --primary-color: #2A5CAA; /* 主蓝色 */
+            --secondary-color: #1E3D6B; /* 深蓝色 */
+            --accent-color: #4A90E2; /* 浅蓝色 */
+            --background-color: #f5f5f5; /* 淡灰背景 */
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --border-color: #ddd;
+            --success-color: #4CAF50;
+            --warning-color: #FFC107;
+            --error-color: #f44336;
+            --tech-blue: #2A5CAA; /* 主蓝色 */
+            --tech-light-blue: #4A90E2; /* 浅蓝色 */
+            --tech-dark-blue: #1E3D6B; /* 深蓝色 */
+            --tech-gradient: linear-gradient(135deg, #2A5CAA 0%, #4A90E2 100%); /* 蓝色渐变 */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding-top: 60px;
+            background: #f5f5f5;
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 顶部导航栏动效 */
+        header {
+            background: var(--tech-gradient);
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 8px 0;
+            background: rgba(42, 92, 170, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo-image {
+            height: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* LOGO样式更新 */
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap;
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .logo-en {
+            font-size: 12px;
+            margin-left: 0;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        a.logo-container:hover .logo-en {
+            opacity: 1;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            -ms-overflow-style: none;
+        }
+
+        nav ul::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        nav ul::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+            padding: 6px 10px;
+            border-radius: var(--border-radius);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        nav a:hover::after {
+            width: 80%;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        nav a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 30px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .menu-toggle span:nth-child(1) {
+            top: 0;
+        }
+
+        .menu-toggle span:nth-child(2) {
+            top: 9px;
+        }
+
+        .menu-toggle span:nth-child(3) {
+            top: 18px;
+        }
+        
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg);
+            top: 9px;
+        }
+        
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg);
+            top: 9px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            nav ul {
+                position: absolute;
+                right: 0;
+                top: 60px;
+                background-color: rgba(0, 0, 0, 0.9);
+                flex-direction: column;
+                width: 50%;
+                transform: translateX(100%);
+                transition: transform 0.5s ease-in;
+                padding: 2rem;
+                z-index: 999;
+            }
+
+            nav ul.active {
+                transform: translateX(0%);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        /* 服务卡片网格 */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: #e3f2fd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .card-icon i {
+            font-size: 24px;
+            color: #2A5CAA;
+        }
+
+        .card-title {
+            font-size: 20px;
+            color: #333;
+            margin: 0;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #2A5CAA;
+        }
+
+        .file-upload i {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        /* 收益面板 */
+        .revenue-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .revenue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .revenue-chart {
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .revenue-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2A5CAA;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 按钮样式 */
+        .submit-btn {
+            background: #2A5CAA;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #4CAF50;
+        }
+
+        /* 响应式布局 */
+        @media (max-width: 768px) {
+            .service-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header>
+        <nav>
+            <a href="/" class="logo-container">
+                <svg width="40" height="40" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="25" cy="25" r="20" fill="#2A5CAA"/>
+                    <circle cx="25" cy="25" r="15" fill="none" stroke="#ffffff" stroke-width="2"/>
+                    <circle cx="25" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="10" r="3" fill="#ffffff"/>
+                    <circle cx="40" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="40" r="3" fill="#ffffff"/>
+                    <circle cx="10" cy="25" r="3" fill="#ffffff"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>智建云链</h1>
+                    <p class="logo-en">SmartBuildChain</p>
+                </div>
+            </a>
+            <ul>
+                <li><a href="/">首页</a></li>
+                <li><a href="/ai-design.html">AI方案设计</a></li>
+                <li><a href="/ai-center.html">AI联合设计中心</a></li>
+                <li><a href="/smart-factory.html">数智工厂</a></li>
+                <li><a href="/industrial-construction.html">工业化建造</a></li>
+                <li><a href="/insurance-platform.html">工程保险平台</a></li>
+                <li><a href="/talent-platform.html">产业人才平台</a></li>
+                <li><a href="/tech-innovation.html">创新技术转化</a></li>
+                <li><a href="/patent-platform.html" class="active">专利协作与维权平台</a></li>
+            </ul>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        <div class="service-grid">
+            <!-- 专利申请卡片 -->
+            <div class="service-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    <h2 class="card-title">专利协作申请</h2>
+                </div>
+                <form id="patentForm">
+                    <div class="form-group">
+                        <label for="techField">技术领域</label>
+                        <select id="techField" required>
+                            <option value="">请选择技术领域</option>
+                            <option value="structure">结构技术</option>
+                            <option value="material">材料技术</option>
+                            <option value="construction">施工技术</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="patentType">合作模式</label>
+                        <select id="patentType" required>
+                            <option value="">请选择合作模式</option>
+                            <option value="exclusive">独家授权</option>
+                            <option value="non-exclusive">非独家授权</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>专利文件</label>
+                        <div class="file-upload">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>点击或拖拽上传文件</p>
+                            <input type="file" style="display: none" accept=".pdf,.doc,.docx">
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">提交申请</button>
+                </form>
+            </div>
+
+            <!-- 维权服务卡片 -->
+            <div class="service-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h2 class="card-title">维权服务</h2>
+                </div>
+                <form id="rightsForm">
+                    <div class="form-group">
+                        <label for="caseType">案件类型</label>
+                        <select id="caseType" required>
+                            <option value="">请选择案件类型</option>
+                            <option value="infringement">专利侵权</option>
+                            <option value="dispute">专利纠纷</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">案件描述</label>
+                        <textarea id="description" required placeholder="请详细描述侵权情况..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>证据材料</label>
+                        <div class="file-upload">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>点击或拖拽上传证据文件</p>
+                            <input type="file" style="display: none" multiple accept="image/*,.pdf">
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">提交举报</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 收益管理面板 -->
+        <div class="revenue-panel">
+            <div class="revenue-header">
+                <h2>收益管理</h2>
+                <select id="timeRange">
+                    <option value="month">近30天</option>
+                    <option value="quarter">近3个月</option>
+                    <option value="year">近1年</option>
+                </select>
+            </div>
+            <div class="revenue-chart">
+                收益趋势图（示例）
+            </div>
+            <div class="revenue-stats">
+                <div class="stat-card">
+                    <div class="stat-value">¥25,000</div>
+                    <div class="stat-label">总收益</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">15%</div>
+                    <div class="stat-label">平台分成比例</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">¥21,250</div>
+                    <div class="stat-label">可提现金额</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 移动端导航菜单
+        function initResponsiveNav() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('nav ul');
+            const overlay = document.querySelector('.overlay');
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                    overlay.style.display = navLinks.classList.contains('active') ? 'block' : 'none';
+                });
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    menuToggle.classList.remove('active');
+                    navLinks.classList.remove('active');
+                    this.style.display = 'none';
+                });
+            }
+        }
+
+        // 滚动时导航栏效果
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initResponsiveNav();
+        });
+
+        // 文件上传处理
+        document.querySelectorAll('.file-upload').forEach(upload => {
+            const input = upload.querySelector('input[type="file"]');
+            const text = upload.querySelector('p');
+
+            upload.addEventListener('click', () => input.click());
+            upload.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                upload.style.borderColor = '#2A5CAA';
+            });
+            upload.addEventListener('dragleave', () => {
+                upload.style.borderColor = '#ddd';
+            });
+            upload.addEventListener('drop', (e) => {
+                e.preventDefault();
+                upload.style.borderColor = '#ddd';
+                input.files = e.dataTransfer.files;
+                updateFileName();
+            });
+            input.addEventListener('change', updateFileName);
+
+            function updateFileName() {
+                if (input.files.length > 0) {
+                    text.textContent = input.files[0].name;
+                } else {
+                    text.textContent = '点击或拖拽上传文件';
+                }
+            }
+        });
+
+        // 表单提交处理
+        document.getElementById('patentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // 这里添加专利申请提交逻辑
+            alert('专利申请已提交，我们将尽快处理');
+        });
+
+        document.getElementById('rightsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // 这里添加维权申请提交逻辑
+            alert('维权申请已提交，我们将尽快处理');
+        });
+
+        // 收益时间范围切换
+        document.getElementById('timeRange').addEventListener('change', function() {
+            // 这里添加收益数据更新逻辑
+            alert('切换到' + this.options[this.selectedIndex].text + '的收益数据');
+        });
+    </script>
+</body>
+</html> 

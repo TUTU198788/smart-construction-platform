@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>成本占比图表</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div style="width: 600px; margin: 0 auto;">
+    <h2 style="text-align: center;">轻钢龙骨灌浆网墙费用构成</h2>
+    <canvas id="costChart"></canvas>
+    <div style="text-align: center; margin-top: 20px; font-size: 18px;">
+      总价：1634.42元
+    </div>
+  </div>
+
+  <div style="width: 600px; margin: 40px auto;">
+    <h2 style="text-align: center;">交错桁架灌浆网墙费用构成</h2>
+    <canvas id="costChart2"></canvas>
+    <div style="text-align: center; margin-top: 20px; font-size: 18px;">
+      总价：223.43元
+    </div>
+  </div>
+
+  <div style="width: 600px; margin: 40px auto;">
+    <h2 style="text-align: center;">中空内模金属网水泥隔墙费用构成</h2>
+    <canvas id="costChart3"></canvas>
+    <div style="text-align: center; margin-top: 20px; font-size: 18px;">
+      总价：2828.19元
+    </div>
+  </div>
+
+  <script>
+    const data = {
+      labels: ['主材费', '辅材费', '人工费', '其他费用', '管理费及税金'],
+      datasets: [{
+        data: [789.90, 30.00, 300.00, 195.00, 319.52],
+        backgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#4BC0C0',
+          '#9966FF'
+        ]
+      }]
+    };
+
+    const config = {
+      type: 'pie',
+      data: data,
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: '各块成本占比'
+          }
+        }
+      }
+    };
+
+    window.onload = function() {
+      const ctx1 = document.getElementById('costChart').getContext('2d');
+      new Chart(ctx1, config);
+
+      // 交错桁架灌浆网墙图表
+      const data2 = {
+        labels: ['主材费', '辅材费', '人工费', '粉刷', '管理费及税金'],
+        datasets: [{
+          data: [105.35, 4.00, 30.00, 47.00, 37.08],
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4BC0C0',
+            '#9966FF'
+          ]
+        }]
+      };
+
+      const config2 = {
+        type: 'pie',
+        data: data2,
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: '各块成本占比'
+            }
+          }
+        }
+      };
+
+      const ctx2 = document.getElementById('costChart2').getContext('2d');
+      new Chart(ctx2, config2);
+
+      // 中空内模金属网水泥隔墙图表
+      const data3 = {
+        labels: ['主材费', '辅材费', '人工费', '其他费用', '管理费及税金'],
+        datasets: [{
+          data: [1345.29, 20.00, 600.00, 310.00, 552.90],
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4BC0C0',
+            '#9966FF'
+          ]
+        }]
+      };
+
+      const config3 = {
+        type: 'pie',
+        data: data3,
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: '各块成本占比'
+            }
+          }
+        }
+      };
+
+      const ctx3 = document.getElementById('costChart3').getContext('2d');
+      new Chart(ctx3, config3);
+    };
+  </script>
+</body>
+</html>

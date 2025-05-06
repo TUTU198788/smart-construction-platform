@@ -1,0 +1,2412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="智建云链 - AI方案设计">
+    <title>AI方案设计 - 智建云链</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 修复Three.js相关库路径 -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2A5CAA;
+            --secondary-color: #1E3D6B;
+            --accent-color: #4A90E2;
+            --background-color: #f0f7ff;
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --border-color: #ddd;
+            --success-color: #4CAF50;
+            --warning-color: #FFC107;
+            --error-color: #f44336;
+            --tech-blue: #2A5CAA;
+            --tech-light-blue: #4A90E2;
+            --tech-dark-blue: #1E3D6B;
+            --tech-gradient: linear-gradient(135deg, #2A5CAA 0%, #4A90E2 100%);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* 顶部导航栏动效 */
+        header {
+            background: var(--tech-gradient);
+            color: white;
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 10px 0;
+            background: rgba(42, 92, 170, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* LOGO样式更新 */
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+            transition: transform 0.5s ease;
+        }
+        
+        .logo:hover svg {
+            transform: rotate(20deg);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #fff;
+            transition: width 0.3s ease;
+        }
+        
+        .logo:hover .logo-text::after {
+            width: 100%;
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .logo-en {
+            font-size: 12px;
+            margin-left: 0;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        .logo:hover .logo-en {
+            opacity: 1;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            -ms-overflow-style: none;
+        }
+
+        nav ul::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        nav ul::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+            padding: 6px 10px;
+            border-radius: var(--border-radius);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        nav a:hover::after {
+            width: 80%;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        nav a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        nav a.active::after {
+            width: 80%;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 30px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .menu-toggle span:nth-child(1) {
+            top: 0;
+        }
+
+        .menu-toggle span:nth-child(2) {
+            top: 9px;
+        }
+
+        .menu-toggle span:nth-child(3) {
+            top: 18px;
+        }
+        
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg);
+            top: 9px;
+        }
+        
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg);
+            top: 9px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--tech-blue);
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        /* 英雄区域样式增强 */
+        .hero-section {
+            background: linear-gradient(135deg, #1976d2 0%, #26a69a 100%);
+            padding: 80px 0;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* 动态背景图案 */
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.3;
+            animation: backgroundMove 30s linear infinite;
+        }
+        
+        @keyframes backgroundMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 100px; }
+        }
+        
+        /* 浮动粒子效果 */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            display: block;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-30px) translateX(15px); }
+            50% { transform: translateY(-10px) translateX(30px); }
+            75% { transform: translateY(-20px) translateX(-15px); }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            animation: titleSlideIn 1s ease-out;
+        }
+        
+        @keyframes titleSlideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            animation: textFadeIn 1.5s ease-out;
+        }
+        
+        @keyframes textFadeIn {
+            from { opacity: 0; }
+            to { opacity: 0.9; }
+        }
+
+        /* 设计工具卡片样式优化 */
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: cardSlideUp 0.8s ease-out;
+        }
+        
+        .form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        @keyframes cardSlideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--tech-blue);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--tech-light-blue);
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+
+        /* 生成按钮增强 */
+        .generate-btn {
+            background: linear-gradient(135deg, #1976d2 0%, #26a69a 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(38, 166, 154, 0.3);
+            width: auto;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transform: skewX(-20deg);
+            transition: all 0.5s ease;
+        }
+        
+        .generate-btn:hover::before {
+            left: 100%;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(38, 166, 154, 0.4);
+            background: linear-gradient(135deg, #1e88e5 0%, #2ed1c5 100%);
+        }
+        
+        .generate-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 5px rgba(38, 166, 154, 0.3);
+        }
+        
+        .generate-btn i {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+        
+        .generate-btn:hover i {
+            transform: rotate(180deg);
+        }
+
+        /* 选项卡片动效 */
+        .option-item {
+            padding: 10px 16px;
+            background-color: #f5f7fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .option-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.6s ease;
+            z-index: -1;
+        }
+        
+        .option-item:hover::before {
+            left: 100%;
+        }
+
+        .option-item:hover {
+            background-color: #e6f7ff;
+            border-color: #91d5ff;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-item.active {
+            background-color: #e6f7ff;
+            border-color: #1890ff;
+            color: #1890ff;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(24, 144, 255, 0.2);
+        }
+
+        /* 预览容器增强 */
+        .preview-container {
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            margin-top: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeIn 0.8s forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .preview-container:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* 静态预览图增强 */
+        .static-preview {
+            transition: all 0.3s ease;
+        }
+        
+        .static-preview:hover {
+            transform: scale(1.02);
+        }
+        
+        /* 动态视图按钮 */
+        .view-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .view-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .view-btn:hover::after {
+            height: 100%;
+        }
+        
+        /* 细节样式增强 */
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--tech-gradient);
+            transition: width 0.3s ease;
+        }
+        
+        .section-title:hover::after {
+            width: 100%;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .preview-header h2 {
+            color: var(--tech-blue);
+            font-size: 24px;
+            margin: 0;
+        }
+        
+        .preview-header .action-btn {
+            width: auto;
+            margin: 0;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            background-color: #f5f7fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .preview-header .action-btn:hover {
+            background-color: #e6f7ff;
+            border-color: #91d5ff;
+            color: #1890ff;
+        }
+
+        .test-preview-btn {
+            background: var(--tech-light-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .test-preview-btn:hover {
+            background: var(--tech-blue);
+        }
+
+        .preview-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .model-viewer {
+            height: 450px;
+            background: #f0f2f5;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #e0e0e0;
+        }
+
+        .model-controls {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        
+        .model-control-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .model-control-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .model-control-btn.active {
+            background: var(--tech-light-blue);
+            color: white;
+            border-color: var(--tech-blue);
+        }
+        
+        .view-controls {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        
+        .view-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .view-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .view-btn.active {
+            background: var(--tech-light-blue);
+            color: white;
+            border-color: var(--tech-blue);
+        }
+        
+        .model-info-overlay {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 12px;
+            max-width: 200px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .model-info-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: var(--tech-blue);
+        }
+
+        .model-canvas-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .model-canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .dimension-label {
+            position: absolute;
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2px 6px;
+            border-radius: 2px;
+            pointer-events: none;
+        }
+        
+        .building-component {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .building-component:hover {
+            filter: brightness(1.2);
+        }
+
+        .report-viewer {
+            background: var(--light-gray);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            overflow-y: auto;
+            max-height: 450px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .report-content h3 {
+            color: var(--tech-blue);
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .report-section {
+            margin-bottom: 25px;
+        }
+
+        .report-section h4 {
+            color: var(--tech-dark-blue);
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .report-section h4 i {
+            font-size: 18px;
+            color: var(--tech-light-blue);
+        }
+
+        .report-section ul {
+            list-style: none;
+        }
+
+        .report-section li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .report-section li:before {
+            content: "•";
+            color: var(--tech-light-blue);
+            position: absolute;
+            left: 0;
+        }
+        
+        .detail-value {
+            font-weight: 500;
+            color: var(--tech-dark-blue);
+        }
+        
+        .action-section {
+            margin-top: 30px;
+        }
+        
+        .action-section h4 {
+            margin-bottom: 15px;
+        }
+        
+        .download-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--light-gray);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .download-btn:hover {
+            background: #e6f7ff;
+            border-color: #91d5ff;
+            color: var(--tech-blue);
+        }
+        
+        .download-btn i {
+            color: var(--tech-light-blue);
+            font-size: 16px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .progress-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, var(--tech-light-blue), var(--tech-blue));
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .contact-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            background: var(--tech-light-blue);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .contact-btn:hover {
+            background: var(--tech-blue);
+        }
+        
+        .data-section {
+            background: #f9f9f9;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 3px solid var(--tech-light-blue);
+        }
+        
+        .data-section h5 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: var(--tech-dark-blue);
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 13px;
+        }
+        
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .data-label {
+            color: #666;
+        }
+
+        .data-value {
+            font-weight: 500;
+        }
+        
+        .tab-nav {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab-btn {
+            padding: 8px 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            position: relative;
+            opacity: 0.7;
+        }
+        
+        .tab-btn.active {
+            opacity: 1;
+            color: var(--tech-blue);
+            font-weight: 500;
+        }
+
+        .tab-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--tech-blue);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 结果弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #f44336;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 15px;
+            }
+
+            .menu-toggle {
+                display: block;
+                margin-left: 15px;
+            }
+
+            .logo-text h1 {
+                font-size: 18px; /* 小屏幕上减小logo字体 */
+            }
+
+            nav {
+                max-width: unset; /* 移除最大宽度限制 */
+            }
+
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--tech-blue);
+                padding: 15px;
+                flex-direction: column;
+                gap: 10px;
+                z-index: 1001; /* 确保导航在其他元素之上 */
+                max-height: 80vh; /* 最大高度 */
+                overflow-y: auto; /* 允许垂直滚动 */
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            .content {
+                margin-top: 80px;
+                padding: 15px;
+            }
+
+            .modal-content {
+                margin: 20px;
+                padding: 20px;
+            }
+        }
+
+        /* 添加中等尺寸屏幕断点 */
+        @media (max-width: 992px) {
+            .nav-container {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            nav {
+                margin-left: auto;
+                overflow-x: auto;
+                max-width: 70%;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* 添加键盘焦点样式 */
+        .option-item:focus {
+            outline: 2px solid #1890ff;
+            outline-offset: 2px;
+        }
+
+        /* 添加高对比度模式支持 */
+        @media (prefers-contrast: high) {
+            .hero-section {
+                background: #1976d2;
+            }
+        }
+
+        /* 英雄区域样式 */
+        .hero-section {
+            background: linear-gradient(135deg, #1976d2 0%, #26a69a 100%);
+            padding: 60px 0;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+        }
+
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="10" cy="10" r="2" fill="rgba(255,255,255,0.2)"/></svg>');
+            background-size: 100px 100px;
+            opacity: 0.3;
+        }
+
+        .container {
+                width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .hero-content {
+                text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* 区域标题样式 */
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: var(--tech-blue);
+        }
+
+        /* 参数输入区域标签样式 */
+        .param-input label {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .param-input input {
+            padding: 10px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .param-input input:focus {
+            border-color: #1890ff;
+            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+            outline: none;
+        }
+
+        /* 生成按钮区域样式 */
+        .generate-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        /* 操作按钮样式 */
+        .actions-section {
+            margin-top: 25px;
+        }
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            background-color: #f5f7fa;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            background-color: #e6f7ff;
+            border-color: #91d5ff;
+            color: #1890ff;
+        }
+
+        .action-btn.primary {
+            background-color: #1890ff;
+            border-color: #1890ff;
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background-color: #40a9ff;
+            border-color: #40a9ff;
+        }
+
+        /* 预览占位符样式 */
+        .preview-placeholder {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #bbb;
+            text-align: center;
+        }
+
+        .preview-placeholder i {
+            margin-bottom: 15px;
+        }
+
+        /* 旋转动画 */
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .rotating {
+            animation: rotate 1s linear infinite;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .preview-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-content h2 {
+                font-size: 28px;
+            }
+            
+            .hero-content p {
+                font-size: 16px;
+            }
+            
+            .params-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .params-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .option-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .option-item {
+                width: 100%;
+                text-align: center;
+            }
+        }
+        
+        /* 详情标签样式 */
+        .detail-label {
+            color: #666;
+        }
+
+        /* 修改选项样式 */
+        .option-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            padding: 8px 16px;
+            background-color: #f5f7fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .option-item:hover {
+            background-color: #e6f7ff;
+            border-color: #91d5ff;
+        }
+
+        .option-item.active {
+            background-color: #e6f7ff;
+            border-color: #1890ff;
+            color: #1890ff;
+            font-weight: 500;
+        }
+
+        /* 修改参数输入区域样式 */
+        .params-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        /* 卡片设计 */
+        .design-tools {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 下载进度条样式 */
+        .download-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .progress-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .progress-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .progress-header i {
+            color: #1890ff;
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .progress-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .progress-bar-container {
+            height: 10px;
+            background-color: #e9e9e9;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #1890ff, #1356c4);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 提示toast样式 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            border-radius: 4px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            z-index: 9999;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .toast.success {
+            border-left: 4px solid #52c41a;
+        }
+        
+        .toast.error {
+            border-left: 4px solid #f5222d;
+        }
+        
+        .toast i {
+            margin-right: 10px;
+        }
+        
+        .toast.success i {
+            color: #52c41a;
+        }
+        
+        .toast.error i {
+            color: #f5222d;
+        }
+        
+        /* 顾问联系模态框样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: scaleIn 0.3s ease;
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .close {
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close:hover {
+            color: #333;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .contact-info {
+            margin-top: 15px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .contact-item i {
+            color: #1890ff;
+            font-size: 18px;
+            width: 30px;
+        }
+        
+        .qrcode {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .qrcode-placeholder {
+            width: 150px;
+            height: 150px;
+            background-color: #f5f5f5;
+            margin: 0 auto 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px dashed #ddd;
+            position: relative;
+        }
+        
+        .qrcode-placeholder:after {
+            content: 'WeChat';
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <svg width="40" height="40" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="25" cy="25" r="20" fill="#2A5CAA"/>
+                    <circle cx="25" cy="25" r="15" fill="none" stroke="#ffffff" stroke-width="2"/>
+                    <circle cx="25" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="10" r="3" fill="#ffffff"/>
+                    <circle cx="40" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="40" r="3" fill="#ffffff"/>
+                    <circle cx="10" cy="25" r="3" fill="#ffffff"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>智建云链</h1>
+                    <p class="logo-en">SmartBuildChain</p>
+            </div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/ai-design.html" class="active">AI方案设计</a></li>
+                    <li><a href="/ai-joint-design.html">AI联合设计中心</a></li>
+                    <li><a href="/smart-factory.html">数智工厂</a></li>
+                    <li><a href="/industrial-construction.html">工业化建造</a></li>
+                    <li><a href="/insurance.html">工程保险平台</a></li>
+                    <li><a href="/talent.html">产业人才平台</a></li>
+                    <li><a href="/innovation.html">创新技术转化</a></li>
+                    <li><a href="/patent.html">专利协作与维权平台</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="overlay"></div>
+
+    <div class="content">
+        <!-- 添加英雄区域 -->
+        <section class="hero-section">
+            <!-- 添加粒子背景 -->
+            <div class="particles">
+                <span class="particle" style="top: 20%; left: 80%; width: 8px; height: 8px; animation-delay: 0s;"></span>
+                <span class="particle" style="top: 60%; left: 20%; width: 12px; height: 12px; animation-delay: 1s;"></span>
+                <span class="particle" style="top: 40%; left: 60%; width: 15px; height: 15px; animation-delay: 2s;"></span>
+                <span class="particle" style="top: 70%; left: 40%; width: 10px; height: 10px; animation-delay: 3s;"></span>
+                <span class="particle" style="top: 30%; left: 30%; width: 14px; height: 14px; animation-delay: 4s;"></span>
+                <span class="particle" style="top: 80%; left: 10%; width: 6px; height: 6px; animation-delay: 5s;"></span>
+                <span class="particle" style="top: 50%; left: 70%; width: 9px; height: 9px; animation-delay: 6s;"></span>
+                <span class="particle" style="top: 10%; left: 50%; width: 12px; height: 12px; animation-delay: 7s;"></span>
+            </div>
+            <div class="container hero-content">
+                <h2>AI方案设计</h2>
+                <p>通过人工智能技术，根据您的建筑需求快速生成专业、高效的结构方案。
+                   只需几步简单操作，即可获得符合工业化建造标准的定制化设计。</p>
+            </div>
+        </section>
+        
+        <div class="form-container design-tools">
+            <h3 class="section-title">方案设计工具</h3>
+            <div class="selection-section">
+                <h3>建筑类型</h3>
+                <div class="option-group">
+                    <div class="option-item active">乡村自建房</div>
+                    <div class="option-item">厂房仓库</div>
+                    <div class="option-item">公共建筑</div>
+                    <div class="option-item">住宅建筑</div>
+                    <div class="option-item">临时建筑</div>
+                </div>
+                </div>
+
+            <div class="selection-section">
+                <h3>结构体系</h3>
+                <div class="option-group">
+                    <div class="option-item active">装配式钢结构</div>
+                    <div class="option-item">装配式组合结构</div>
+                    <div class="option-item">模块化结构</div>
+                    <div class="option-item">预制预应力结构</div>
+                    <div class="option-item">装配式木结构</div>
+                </div>
+                </div>
+
+            <div class="params-grid">
+                <div class="param-input">
+                    <label for="length">长度 (m)</label>
+                    <input type="number" id="length" value="12" min="1">
+                </div>
+                <div class="param-input">
+                    <label for="width">宽度 (m)</label>
+                    <input type="number" id="width" value="10" min="1">
+                </div>
+                <div class="param-input">
+                    <label for="height">建筑高度 (m)</label>
+                    <input type="number" id="height" value="8" min="1">
+                </div>
+                <div class="param-input">
+                    <label for="floors">层数</label>
+                    <input type="number" id="floors" value="2" min="1">
+                </div>
+                <div class="param-input">
+                    <label for="floorHeight">层高 (m)</label>
+                    <input type="number" id="floorHeight" value="3.5" min="2">
+                </div>
+                <div class="param-input">
+                    <label for="load">设计荷载 (kN/m²)</label>
+                    <input type="number" id="load" value="3.0" min="1" step="0.1">
+        </div>
+    </div>
+
+            <div class="generate-section">
+                <button id="generateBtn" class="generate-btn">
+                    <i class="fas fa-cogs"></i> 生成结构方案
+                </button>
+            </div>
+        </div>
+
+        <div id="previewContainer" class="preview-container" style="display: none;">
+            <div class="preview-header">
+                <h2>设计方案预览</h2>
+                <button id="modify-btn" class="action-btn">
+                    <i class="fas fa-edit"></i> 修改参数
+                </button>
+            </div>
+            <div class="preview-content">
+                <div id="modelViewer" class="model-viewer">
+                    <div class="model-canvas-container">
+                        <canvas id="modelCanvas" class="model-canvas"></canvas>
+                        <!-- 尺寸标注将通过JS动态添加 -->
+                    </div>
+                    
+                    <!-- 视角控制按钮 -->
+                    <div class="view-controls">
+                        <button class="view-btn active" data-view="front">正视图</button>
+                        <button class="view-btn" data-view="side">侧视图</button>
+                        <button class="view-btn" data-view="top">顶视图</button>
+                    </div>
+                    
+                    <!-- 模型控制按钮 -->
+                    <div class="model-controls">
+                        <button class="model-control-btn" id="zoomInBtn" title="放大">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="model-control-btn" id="zoomOutBtn" title="缩小">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="model-control-btn" id="resetViewBtn" title="重置视角">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button class="model-control-btn" id="toggleGridBtn" title="显示/隐藏网格">
+                            <i class="fas fa-th"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- 组件信息悬浮框 -->
+                    <div class="model-info-overlay" id="componentInfo">
+                        <div class="model-info-title">构件信息</div>
+                        <div class="model-info-content">选择模型上的构件查看详情</div>
+                    </div>
+                    
+                    <!-- 加载中提示 -->
+                    <div class="preview-placeholder" id="modelLoadingPlaceholder">
+                        <i class="fas fa-cube fa-3x"></i>
+                        <p>3D模型加载中，请稍候...</p>
+                    </div>
+                </div>
+                <div id="reportViewer" class="report-viewer">
+                    <div class="report-content">
+                        <h3>方案详情</h3>
+                        
+                        <div class="tab-nav">
+                            <button class="tab-btn active" data-tab="basic-info">基本信息</button>
+                            <button class="tab-btn" data-tab="tech-params">技术参数</button>
+                            <button class="tab-btn" data-tab="downloads">下载选项</button>
+                        </div>
+                        
+                        <!-- 基本信息面板 -->
+                        <div class="tab-content active" id="basic-info">
+                            <div class="report-section">
+                                <h4><i class="fas fa-info-circle"></i> 基本信息</h4>
+                                <ul>
+                                    <li><span class="detail-label">建筑类型：</span><span id="detail-type" class="detail-value">乡村自建房</span></li>
+                                    <li><span class="detail-label">结构体系：</span><span id="detail-structure" class="detail-value">装配式钢结构</span></li>
+                                    <li><span class="detail-label">建筑尺寸：</span><span id="detail-size" class="detail-value">12m × 10m × 8m</span></li>
+                                    <li><span class="detail-label">层数/层高：</span><span id="detail-floors" class="detail-value">2层 / 3.5m</span></li>
+                                    <li><span class="detail-label">设计荷载：</span><span id="detail-load" class="detail-value">3.0 kN/m²</span></li>
+                                    <li><span class="detail-label">建筑面积：</span><span id="detail-area" class="detail-value">240 m²</span></li>
+                                    <li><span class="detail-label">生成时间：</span><span id="detail-time" class="detail-value">2024-04-22 14:35</span></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="data-section">
+                                <h5>工程估算数据</h5>
+                                <div class="data-grid">
+                                    <div class="data-item">
+                                        <span class="data-label">预估造价：</span>
+                                        <span class="data-value">¥576,000</span>
+                                    </div>
+                                    <div class="data-item">
+                                        <span class="data-label">单方造价：</span>
+                                        <span class="data-value">¥2,400/m²</span>
+                                    </div>
+                                    <div class="data-item">
+                                        <span class="data-label">工期估算：</span>
+                                        <span class="data-value">45天</span>
+                                    </div>
+                                    <div class="data-item">
+                                        <span class="data-label">结构重量：</span>
+                                        <span class="data-value">36吨</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 技术参数面板 -->
+                        <div class="tab-content" id="tech-params">
+                            <div class="report-section">
+                                <h4><i class="fas fa-cogs"></i> 结构参数</h4>
+                                <ul>
+                                    <li><span class="detail-label">结构安全等级：</span><span class="detail-value">二级</span></li>
+                                    <li><span class="detail-label">抗震设防烈度：</span><span class="detail-value">7度</span></li>
+                                    <li><span class="detail-label">地基基础类型：</span><span class="detail-value">独立基础</span></li>
+                                    <li><span class="detail-label">设计使用年限：</span><span class="detail-value">50年</span></li>
+                                    <li><span class="detail-label">基础埋深：</span><span class="detail-value">1.2m</span></li>
+                                    <li><span class="detail-label">主体结构形式：</span><span class="detail-value">轻钢框架</span></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="report-section">
+                                <h4><i class="fas fa-bolt"></i> 性能参数</h4>
+                                <ul>
+                                    <li><span class="detail-label">保温性能：</span><span class="detail-value">优秀</span></li>
+                                    <li><span class="detail-label">外墙传热系数：</span><span class="detail-value">0.35 W/(m²·K)</span></li>
+                                    <li><span class="detail-label">气密性等级：</span><span class="detail-value">3级</span></li>
+                                    <li><span class="detail-label">抗风能力：</span><span class="detail-value">12级</span></li>
+                                    <li><span class="detail-label">围护结构类型：</span><span class="detail-value">轻质复合墙板</span></li>
+                                    <li><span class="detail-label">屋面材料：</span><span class="detail-value">轻钢瓦</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- 下载选项面板 -->
+                        <div class="tab-content" id="downloads">
+                            <div class="report-section">
+                                <h4><i class="fas fa-download"></i> 下载选项</h4>
+                                <div class="download-options">
+                                    <a href="#" class="download-btn" id="downloadPdf" data-format="PDF">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <span>完整方案报告(PDF)</span>
+                                    </a>
+                                    <a href="#" class="download-btn" id="downloadImages" data-format="JPG">
+                                        <i class="fas fa-images"></i>
+                                        <span>效果图集(JPG)</span>
+                                    </a>
+                                    <a href="#" class="download-btn" id="downloadSpecs" data-format="技术规格书">
+                                        <i class="fas fa-file-alt"></i>
+                                        <span>技术规格书</span>
+                                    </a>
+                                    <a href="#" class="download-btn" id="download3dModel" data-format="OBJ">
+                                        <i class="fas fa-cube"></i>
+                                        <span>3D模型文件(OBJ)</span>
+                                    </a>
+                                </div>
+                                <div class="progress-bar" id="downloadProgress">
+                                    <div class="progress-bar-inner"></div>
+                                </div>
+                            </div>
+                            
+                            <button class="contact-btn" id="contactBtn">
+                                <i class="fas fa-headset"></i>
+                                <span>联系技术顾问</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <div class="download-progress">
+        <div class="progress-container">
+            <div class="progress-header">
+                <i class="fas fa-download"></i>
+                <h3>正在下载文件</h3>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+            <span class="progress-text">0%</span>
+        </div>
+    </div>
+
+    <div class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span>文件下载成功</span>
+    </div>
+
+    <div class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>联系技术顾问</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>您可以通过以下方式联系我们的技术顾问:</p>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>400-800-1234</span>
+                </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>support@transai.com</span>
+                </div>
+                    <div class="contact-item">
+                        <i class="fas fa-comment"></i>
+                        <span>扫描二维码添加顾问微信</span>
+                </div>
+                    <div class="qrcode">
+                        <div class="qrcode-placeholder"></div>
+                        <p>工作时间: 周一至周五 9:00-18:00</p>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化页面事件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 页面滚动监听，添加导航栏效果
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+            
+            // 选项切换功能
+            document.querySelectorAll('.option-item').forEach(option => {
+                option.addEventListener('click', function() {
+                    // 找到所有同组的选项，移除active类
+                    const siblings = this.parentElement.querySelectorAll('.option-item');
+                    siblings.forEach(sib => sib.classList.remove('active'));
+                    
+                    // 给当前选中的选项添加active类
+                    this.classList.add('active');
+                });
+            });
+            
+            // 生成按钮点击事件
+            const generateBtn = document.getElementById('generateBtn');
+            if (generateBtn) {
+                generateBtn.addEventListener('click', function() {
+                    // 显示加载状态
+                    this.innerHTML = '<i class="fas fa-sync-alt rotating"></i> 生成中...';
+                    this.disabled = true;
+                    
+                    // 模拟生成过程，通常这里会有实际的API调用
+                    setTimeout(() => {
+                        // 显示结果区域
+                        const previewContainer = document.getElementById('previewContainer');
+                        previewContainer.style.display = 'block';
+                        
+                        // 触发动画
+                        setTimeout(() => {
+                            previewContainer.style.opacity = '1';
+                            previewContainer.style.transform = 'translateY(0)';
+                        }, 100);
+                        
+                        // 更新结果详情
+                        updateResultDetails();
+                        
+                        // 恢复按钮状态
+                        this.innerHTML = '<i class="fas fa-cogs"></i> 生成结构方案';
+                        this.disabled = false;
+                        
+                        // 滚动到结果区域
+                        document.getElementById('previewContainer').scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        // 显示静态预览图
+                        showStaticPreview();
+                    }, 2000);
+                });
+            }
+            
+            // 修改参数按钮点击事件
+            const modifyBtn = document.getElementById('modify-btn');
+            if (modifyBtn) {
+                modifyBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('previewContainer').style.display = 'none';
+                    document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+            
+            // 下载按钮点击事件
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const format = this.dataset.format;
+                    const progressBar = document.querySelector('.download-progress .progress-bar');
+                    const progressText = document.querySelector('.progress-text');
+                    
+                    // 显示进度条
+                    document.querySelector('.download-progress').style.display = 'flex';
+                    
+                    // 模拟下载进度
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += Math.random() * 10;
+                        if (progress >= 100) {
+                            progress = 100;
+                            clearInterval(interval);
+                            
+                            // 下载完成
+                            setTimeout(() => {
+                                document.querySelector('.download-progress').style.display = 'none';
+                                
+                                // 显示下载完成提示
+                                showToast('success', `${format}格式文件下载成功`);
+                            }, 500);
+                        }
+                        
+                        // 更新进度条
+                        progressBar.style.width = `${progress}%`;
+                        progressText.textContent = `${Math.round(progress)}%`;
+                    }, 200);
+                });
+            });
+            
+            // 联系顾问按钮点击事件
+            const contactBtn = document.getElementById('contactBtn');
+            if (contactBtn) {
+                contactBtn.addEventListener('click', function() {
+                    showContactModal();
+                });
+            }
+            
+            // 关闭模态框
+            const closeBtn = document.querySelector('.close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    document.querySelector('.modal').style.display = 'none';
+                });
+            }
+            
+            // 点击模态框外部关闭
+            const modal = document.querySelector('.modal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+            
+            // 标签页切换功能
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // 移除所有标签页按钮的active类
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    // 给当前标签页按钮添加active类
+                    this.classList.add('active');
+                    
+                    // 隐藏所有标签页内容
+                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                    // 显示当前标签页内容
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // 移动端菜单切换
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navUl = document.querySelector('nav ul');
+            const overlay = document.querySelector('.overlay');
+            
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navUl.classList.toggle('active');
+                    overlay.style.display = navUl.classList.contains('active') ? 'block' : 'none';
+                });
+            }
+            
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    if (menuToggle) menuToggle.classList.remove('active');
+                    if (navUl) navUl.classList.remove('active');
+                overlay.style.display = 'none';
+                });
+            }
+            
+            // 添加动画效果，当元素进入视口时触发
+            const animateOnScroll = function() {
+                const elements = document.querySelectorAll('.form-container, .preview-container, .section-title');
+                
+                elements.forEach(element => {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight * 0.85;
+                    
+                    if (elementPosition < screenPosition) {
+                        element.classList.add('animate');
+                    }
+                });
+            };
+            
+            // 监听滚动事件
+            window.addEventListener('scroll', animateOnScroll);
+            
+            // 初始化动画
+            animateOnScroll();
+        });
+        
+        // 更新结果详情
+        function updateResultDetails() {
+            // 获取默认值，不再依赖选择
+            const buildingType = "农村自建房";
+            const structureType = "装配式钢结构";
+            const length = document.getElementById('length').value || "12";
+            const width = document.getElementById('width').value || "10";
+            const height = document.getElementById('height').value || "8";
+            const floors = document.getElementById('floors').value || "3";
+            const floorHeight = document.getElementById('floorHeight').value || "3";
+            const load = document.getElementById('load').value || "2.0";
+            
+            // 计算建筑面积
+            const floorArea = length * width;
+            const totalArea = floorArea * floors;
+            
+            // 更新详情显示
+            document.getElementById('detail-type').textContent = buildingType;
+            document.getElementById('detail-structure').textContent = structureType;
+            document.getElementById('detail-size').textContent = `${length}m × ${width}m × ${height}m`;
+            document.getElementById('detail-floors').textContent = `${floors}层 / ${floorHeight}m`;
+            document.getElementById('detail-load').textContent = `${load} kN/m²`;
+            document.getElementById('detail-area').textContent = `${totalArea} m²`;
+            
+            // 更新生成时间
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('detail-time').textContent = timeString;
+        }
+        
+        // 下载进度条功能
+        function showDownloadProgress() {
+            const progressElement = document.querySelector('.download-progress');
+            const progressBar = document.querySelector('.progress-bar');
+            const progressText = document.querySelector('.progress-text');
+            
+            progressElement.style.display = 'flex';
+            
+            // 模拟下载进度
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 5;
+                if (progress > 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // 下载完成后隐藏进度条并显示成功提示
+                    setTimeout(() => {
+                        progressElement.style.display = 'none';
+                        showToast('success', '文件下载成功');
+                    }, 500);
+                }
+                
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}%`;
+            }, 200);
+        }
+        
+        // 提示消息功能
+        function showToast(type, message, duration = 3000) {
+            const toast = document.querySelector('.toast');
+            const icon = toast.querySelector('i');
+            const text = toast.querySelector('span');
+            
+            // 设置提示类型
+            toast.className = `toast ${type}`;
+            
+            // 设置图标
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle';
+            } else if (type === 'error') {
+                icon.className = 'fas fa-times-circle';
+            }
+            
+            // 设置消息文本
+            text.textContent = message;
+            
+            // 显示提示
+            toast.style.display = 'flex';
+            
+            // 设置自动隐藏
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, duration);
+        }
+        
+        // 连接顾问模态框功能
+        function showContactModal() {
+            const modal = document.querySelector('.modal');
+            modal.style.display = 'flex';
+        }
+        
+        // 显示静态预览图
+        function showStaticPreview() {
+            const modelViewer = document.getElementById('modelViewer');
+            if (!modelViewer) return;
+            
+            // 清空内容
+            modelViewer.innerHTML = '';
+            
+            // 创建静态预览图
+            const staticPreview = document.createElement('div');
+            staticPreview.className = 'static-preview';
+            staticPreview.style.width = '100%';
+            staticPreview.style.height = '400px';
+            staticPreview.style.borderRadius = '8px';
+            staticPreview.style.overflow = 'hidden';
+            staticPreview.style.backgroundColor = '#f0f8ff';
+            staticPreview.style.position = 'relative';
+            
+            staticPreview.innerHTML = `
+                <svg width="100%" height="100%" viewBox="0 0 800 450" style="background-color:#114a7e;">
+                    <defs>
+                        <linearGradient id="buildingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#1B5098;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <!-- 建筑主体 -->
+                    <path d="M400,75L200,200V350H600V200L400,75Z" fill="url(#buildingGradient)" stroke="#448" stroke-width="2"/>
+                    <!-- 左侧建筑 -->
+                    <path d="M250,200L150,250V400H350V250L250,200Z" fill="#438" stroke="#54a" stroke-width="2"/>
+                    <!-- 右侧建筑 -->
+                    <path d="M550,200L450,250V400H650V250L550,200Z" fill="#438" stroke="#54a" stroke-width="2"/>
+                    
+                    <!-- 水平结构线 -->
+                    <line x1="200" y1="200" x2="600" y2="200" stroke="#668" stroke-width="2"/>
+                    <line x1="200" y1="275" x2="600" y2="275" stroke="#668" stroke-width="2"/>
+                    
+                    <!-- 门窗 -->
+                    <rect x="375" y="300" width="50" height="100" fill="#57a"/>
+                    <path d="M275,400 L275,350 L325,350 L325,400" fill="none" stroke="#57a" stroke-width="2"/>
+                    <path d="M475,400 L475,350 L525,350 L525,400" fill="none" stroke="#57a" stroke-width="2"/>
+                    
+                    <!-- 标题 -->
+                    <text x="400" y="40" font-family="Arial" font-size="20" fill="white" text-anchor="middle">装配式建筑示意图</text>
+                    
+                    <!-- 标注尺寸 -->
+                    <text x="125" y="325" font-family="Arial" font-size="12" fill="white" text-anchor="middle" transform="rotate(-90, 125, 325)">高度: ${document.getElementById('height').value || 8}m</text>
+                    <text x="400" y="430" font-family="Arial" font-size="12" fill="white" text-anchor="middle">长度: ${document.getElementById('length').value || 12}m</text>
+                    <text x="700" y="325" font-family="Arial" font-size="12" fill="white" text-anchor="middle" transform="rotate(90, 700, 325)">宽度: ${document.getElementById('width').value || 10}m</text>
+                    
+                    <!-- 装饰 - 网格 -->
+                    <path d="M200,350 L200,400 L600,400 L600,350" stroke="#99A" stroke-width="1" stroke-dasharray="5,5" fill="none"/>
+                    
+                    <!-- 装饰 - 图例 -->
+                    <rect x="650" y="50" width="100" height="100" fill="rgba(0,0,0,0.5)" rx="5"/>
+                    <text x="700" y="70" font-family="Arial" font-size="12" fill="white" text-anchor="middle">图例</text>
+                    <rect x="660" y="80" width="10" height="10" fill="url(#buildingGradient)"/>
+                    <text x="710" y="90" font-family="Arial" font-size="10" fill="white">主体结构</text>
+                    <rect x="660" y="100" width="10" height="10" fill="#438"/>
+                    <text x="710" y="110" font-family="Arial" font-size="10" fill="white">辅助结构</text>
+                    <rect x="660" y="120" width="10" height="10" fill="#57a"/>
+                    <text x="710" y="130" font-family="Arial" font-size="10" fill="white">门窗</text>
+                    
+                    <!-- 楼层线 -->
+                    ${generateFloorLines()}
+                </svg>
+            `;
+            
+            modelViewer.appendChild(staticPreview);
+            
+            // 添加控制按钮组
+            const controlsDiv = document.createElement('div');
+            controlsDiv.className = 'model-controls';
+            controlsDiv.style.margin = '15px 0';
+            controlsDiv.style.display = 'flex';
+            controlsDiv.style.justifyContent = 'center';
+            controlsDiv.style.gap = '10px';
+            
+            controlsDiv.innerHTML = `
+                <button class="view-btn active" data-view="front" style="padding: 5px 10px; background: #2A5CAA; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-eye"></i> 正视图
+                </button>
+                <button class="view-btn" data-view="side" style="padding: 5px 10px; background: #f0f0f0; color: #333; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-eye"></i> 侧视图
+                </button>
+                <button class="view-btn" data-view="top" style="padding: 5px 10px; background: #f0f0f0; color: #333; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-eye"></i> 俯视图
+                </button>
+            `;
+            
+            modelViewer.appendChild(controlsDiv);
+            
+            // 添加视图按钮事件
+            controlsDiv.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    controlsDiv.querySelectorAll('.view-btn').forEach(b => {
+                        b.classList.remove('active');
+                        b.style.background = '#f0f0f0';
+                        b.style.color = '#333';
+                    });
+                    
+                    // 给当前按钮添加active类
+                    this.classList.add('active');
+                    this.style.background = '#2A5CAA';
+                    this.style.color = 'white';
+                    
+                    // 更换视图
+                    const view = this.dataset.view;
+                    changeView(view, staticPreview);
+                });
+            });
+        }
+        
+        // 切换视图函数
+        function changeView(viewType, previewElement) {
+            if (!previewElement) return;
+            
+            const length = document.getElementById('length').value || 12;
+            const width = document.getElementById('width').value || 10;
+            const height = document.getElementById('height').value || 8;
+            
+            let svgContent = '';
+            
+            switch (viewType) {
+                case 'front':
+                    svgContent = `
+                        <svg width="100%" height="100%" viewBox="0 0 800 450" style="background-color:#114a7e;">
+                            <path d="M200,100H600V400H200Z" fill="#4A90E2" stroke="#448" stroke-width="2"/>
+                            <rect x="350" y="300" width="100" height="100" fill="#57a"/>
+                            ${generateFrontFloorLines(height, length)}
+                            <text x="400" y="40" font-family="Arial" font-size="20" fill="white" text-anchor="middle">正视图</text>
+                            <text x="150" y="250" font-family="Arial" font-size="12" fill="white" text-anchor="middle" transform="rotate(-90, 150, 250)">高度: ${height}m</text>
+                            <text x="400" y="430" font-family="Arial" font-size="12" fill="white" text-anchor="middle">长度: ${length}m</text>
+                        </svg>
+                    `;
+                    break;
+                    
+                case 'side':
+                    svgContent = `
+                        <svg width="100%" height="100%" viewBox="0 0 800 450" style="background-color:#114a7e;">
+                            <path d="M250,100H550V400H250Z" fill="#336699" stroke="#448" stroke-width="2"/>
+                            <rect x="350" y="300" width="100" height="100" fill="#57a"/>
+                            ${generateFrontFloorLines(height, width)}
+                            <text x="400" y="40" font-family="Arial" font-size="20" fill="white" text-anchor="middle">侧视图</text>
+                            <text x="200" y="250" font-family="Arial" font-size="12" fill="white" text-anchor="middle" transform="rotate(-90, 200, 250)">高度: ${height}m</text>
+                            <text x="400" y="430" font-family="Arial" font-size="12" fill="white" text-anchor="middle">宽度: ${width}m</text>
+                        </svg>
+                    `;
+                    break;
+                    
+                case 'top':
+                    svgContent = `
+                        <svg width="100%" height="100%" viewBox="0 0 800 450" style="background-color:#114a7e;">
+                            <rect x="200" y="150" width="${length * 20}" height="${width * 20}" fill="#5383bd" stroke="#448" stroke-width="2"/>
+                            <line x1="200" y1="250" x2="${200 + length * 20}" y2="250" stroke="#668" stroke-width="1" stroke-dasharray="5,5"/>
+                            <rect x="${200 + length * 10 - 40}" y="${150 + width * 20 - 20}" width="80" height="20" fill="#57a"/>
+                            <text x="400" y="40" font-family="Arial" font-size="20" fill="white" text-anchor="middle">俯视图</text>
+                            <text x="400" y="${150 + width * 20 + 30}" font-family="Arial" font-size="12" fill="white" text-anchor="middle">长度: ${length}m</text>
+                            <text x="${200 + length * 20 + 30}" y="${150 + width * 10}" font-family="Arial" font-size="12" fill="white" text-anchor="middle" transform="rotate(90, ${200 + length * 20 + 30}, ${150 + width * 10})">宽度: ${width}m</text>
+                            <text x="${200 + length * 10}" y="${150 + width * 10}" font-family="Arial" font-size="14" fill="white" text-anchor="middle">建筑面积: ${length * width}m²</text>
+                        </svg>
+                    `;
+                    break;
+                    
+                default:
+                    return;
+            }
+            
+            previewElement.innerHTML = svgContent;
+        }
+        
+        // 生成楼层线
+        function generateFloorLines() {
+            const floors = document.getElementById('floors').value || 3;
+            const floorLines = [];
+            
+            if (floors <= 1) return '';
+            
+            const floorHeight = 300 / floors;
+            
+            for (let i = 1; i < floors; i++) {
+                const y = 400 - i * floorHeight;
+                floorLines.push(`<line x1="200" y1="${y}" x2="600" y2="${y}" stroke="#99A" stroke-width="1" stroke-dasharray="5,5"/>`);
+            }
+            
+            return floorLines.join('');
+        }
+        
+        // 生成正视图楼层线
+        function generateFrontFloorLines(height, width) {
+            const floors = document.getElementById('floors').value || 3;
+            const floorLines = [];
+            
+            if (floors <= 1) return '';
+            
+            const floorHeight = 300 / floors;
+            
+            for (let i = 1; i < floors; i++) {
+                const y = 400 - i * floorHeight;
+                floorLines.push(`<line x1="200" y1="${y}" x2="${200 + width * 20}" y2="${y}" stroke="#99A" stroke-width="1" stroke-dasharray="5,5"/>`);
+            }
+            
+            return floorLines.join('');
+        }
+        
+        // 模拟点击生成按钮测试功能
+        setTimeout(() => {
+            console.log('自动触发生成按钮测试');
+            const generateBtn = document.getElementById('generateBtn');
+            if (generateBtn) {
+                generateBtn.click();
+            }
+        }, 1000);
+    </script>
+</body>
+</html> 

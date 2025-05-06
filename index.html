@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="智建云链 - 智能建造与产业链协同创新平台">
+    <title>智建云链 - 智能建造与产业链协同创新平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Han Sans', "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            padding-top: 120px;  /* 根据实际头部高度调整 */
+        }
+
+        /* 页面头部容器 */
+        .page-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: #ffffff;
+        }
+
+        /* 品牌区域样式 */
+        .brand-area {
+            background: #ffffff;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .brand-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .logo-wrapper {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .brand-name {
+            color: #333333;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .brand-name-en {
+            color: #666666;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        /* 导航菜单样式优化 */
+        .nav-container {
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            padding: 0;
+        }
+
+        #navMenu {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+        }
+
+        #navMenu li {
+            position: relative;
+        }
+
+        #navMenu li a {
+            color: #333333;
+            text-decoration: none;
+            font-size: 15px;
+            padding: 15px 0;
+            transition: color 0.3s ease;
+            display: block;
+        }
+
+        #navMenu li a:hover {
+            color: #2A5CAA;
+        }
+
+        #navMenu li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #2A5CAA;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        #navMenu li a:hover::after {
+            transform: scaleX(1);
+        }
+
+        #navMenu li a.active {
+            color: #2A5CAA;
+        }
+
+        #navMenu li a.active::after {
+            transform: scaleX(1);
+        }
+
+        /* 搜索框优化 */
+        .search-bar {
+            border-radius: 20px;
+            padding: 8px 16px;
+            border: 1px solid #E2E8F0;
+            background: #F7FAFC;
+            width: 240px;
+            outline: none;
+        }
+
+        .search-bar:focus {
+            border-color: #48BB78;
+            box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.2);
+        }
+
+        /* 汉堡菜单按钮 */
+        .menu-toggle {
+            display: none;
+            width: 30px;
+            height: 30px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-toggle::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: white;
+            box-shadow: 0 -8px 0 white, 0 8px 0 white;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* 内容区域 */
+        main {
+            margin-top: 60px;
+            padding: 20px;
+        }
+
+        /* Banner区域 */
+        .banner {
+            background: linear-gradient(135deg, #2A5CAA 0%, #00A0B0 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+            overflow: hidden;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .platform-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .platform-subtitle {
+            font-size: 1.5em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+        }
+
+        .slogan {
+            font-size: 2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .sub-slogan {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+        }
+
+        /* 动态背景 */
+        .banner-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .banner h1 {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 30% 50%, rgba(42, 92, 170, 0.4) 0%, transparent 70%),
+                              radial-gradient(circle at 70% 50%, rgba(76, 175, 80, 0.4) 0%, transparent 70%);
+            animation: pulse 8s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        /* 服务卡片区域 */
+        .services {
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        /* 服务卡片样式 */
+        .service-card {
+            background: #F5F5F5;
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            padding-top: 40px;
+        }
+
+        .service-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card h2 {
+            color: #2A5CAA;
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            color: #666;
+        }
+
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #666;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #2A5CAA;
+                flex-direction: column;
+                padding: 10px 0;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            nav li {
+                width: 100%;
+                text-align: center;
+                padding: 10px 0;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .service-card {
+                text-align: left;
+            }
+
+            .service-card i {
+                font-size: 24px;
+            }
+        }
+
+        /* 添加思源黑体 */
+        @font-face {
+            font-family: 'Source Han Sans';
+            src: url('path/to/SourceHanSansCN-Regular.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* Logo SVG样式 */
+        .logo-svg {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        /* Logo容器样式 */
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        /* 服务卡片图标样式优化 */
+        .service-card i {
+            font-size: 32px;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* 模块主题色 */
+        .service-card.ai i { color: #2A5CAA; }
+        .service-card.factory i { color: #4CAF50; }
+        .service-card.insurance i { color: #FF6D00; }
+        .service-card.talent i { color: #FF9800; }
+        .service-card.patent i { color: #E91E63; }
+        .service-card.industrial i { color: #673AB7; }
+
+        /* 遮罩层样式 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 90;
+        }
+
+        .banner canvas {
+            display: block !important;
+            z-index: 5 !important;
+        }
+
+        /* 强制显示Canvas */
+        canvas {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .banner {
+            position: relative !important;
+            overflow: visible !important;
+        }
+
+        /* 思源黑体字体引入 */
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 300;
+            src: url(https://fonts.gstatic.com/s/notosanssc/v12/k3kIo84MPvpLmixcA63oeALZhaCt9E3g-Lbpcnr20eUBAZG.woff2) format('woff2');
+        }
+
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 400;
+            src: url(https://fonts.gstatic.com/s/notosanssc/v12/k3kXo84MPvpLmixcA63oeALhL4iJ-Q7m8w.woff2) format('woff2');
+        }
+
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 700;
+            src: url(https://fonts.gstatic.com/s/notosanssc/v12/k3kIo84MPvpLmixcA63oeALZlaet9E3g-Lbpcnr20eUBAZG.woff2) format('woff2');
+        }
+
+        /* 应用字体到标题和导航 */
+        h1, nav a { 
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 700; /* 标题加粗 */
+        }
+
+        /* 其他文本使用常规字重 */
+        p, .service-card h2 {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 400;
+        }
+
+        /* 轻量文本 */
+        .logo-en, footer p {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 300;
+        }
+
+        .service-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .service-card i {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2A5CAA;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 模块主题色 */
+        .service-card.ai i { color: #2A5CAA; }
+        .service-card.factory i { color: #4CAF50; }
+        .service-card.insurance i { color: #FF6D00; }
+        .service-card.tech i { color: #2196F3; }
+        .service-card.design i { color: #E91E63; }
+        .service-card.patent i { color: #673AB7; }
+
+        /* 添加工业化建造模块的主题色 */
+        .service-card.industrial i { 
+            color: #FF6B6B; /* 使用醒目的红色调 */
+        }
+
+        .service-card.industrial:hover {
+            border-color: #FF6B6B;
+        }
+
+        /* 添加产业人才平台模块的主题色 */
+        .service-card.talent i {
+            color: #FF9800; /* 使用温暖的橙色调 */
+        }
+
+        .service-card.talent:hover {
+            border-color: #FF9800;
+        }
+
+        /* 搜索栏样式 */
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 30px auto;
+            z-index: 3;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 搜索结果面板 */
+        .search-results {
+                position: absolute;
+                top: 100%;
+                left: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+            overflow: hidden;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .result-section {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+                display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            font-size: 16px;
+        }
+
+        .result-item {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .result-item:hover {
+            background: #f5f5f5;
+        }
+
+        .result-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .result-icon.tech { background: #2A5CAA; }
+        .result-icon.course { background: #FF9800; }
+        .result-icon.factory { background: #4CAF50; }
+
+        /* 添加咨询按钮样式 */
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            margin-top: 30px;
+            font-size: 18px;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(135deg, #4CAF50 0%, #2A5CAA 100%);
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(42, 92, 170, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(42, 92, 170, 0.4);
+            background: linear-gradient(135deg, #2A5CAA 0%, #4CAF50 100%);
+        }
+
+        .cta-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(42, 92, 170, 0.3);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* 添加按钮内部图标样式 */
+        .cta-button i {
+            margin-right: 8px;
+            font-size: 20px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- 标题栏 -->
+    <header class="page-header">
+        <div class="brand-area">
+            <div class="brand-container">
+                <div class="logo-wrapper">
+                    <svg class="brand-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 中心蓝色圆圈 -->
+                        <circle cx="100" cy="100" r="30" fill="#2A5CAA"/>
+                        <!-- 外围绿色圆环 -->
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#4CAF50" stroke-width="2"/>
+                        <!-- 黄色圆点 - 大尺寸（上下） -->
+                        <circle cx="100" cy="20" r="15" fill="#FFD700"/>
+                        <circle cx="100" cy="180" r="15" fill="#FFD700"/>
+                        
+                        <!-- 黄色圆点 - 中尺寸（对角） -->
+                        <circle cx="165" cy="35" r="12" fill="#FFD700"/>
+                        <circle cx="165" cy="165" r="12" fill="#FFD700"/>
+                        <circle cx="35" cy="165" r="12" fill="#FFD700"/>
+                        <circle cx="35" cy="35" r="12" fill="#FFD700"/>
+                        
+                        <!-- 黄色圆点 - 小尺寸（左右） -->
+                        <circle cx="180" cy="100" r="10" fill="#FFD700"/>
+                        <circle cx="20" cy="100" r="10" fill="#FFD700"/>
+                        
+                        <!-- 连接线 -->
+                        <line x1="100" y1="70" x2="100" y2="20" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="130" y1="100" x2="180" y2="100" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="100" y1="130" x2="100" y2="180" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="70" y1="100" x2="20" y2="100" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="122" y1="78" x2="165" y2="35" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="122" y1="122" x2="165" y2="165" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="78" y1="122" x2="35" y2="165" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="78" y1="78" x2="35" y2="35" stroke="#4CAF50" stroke-width="2"/>
+                </svg>
+                </div>
+                <div class="brand-text">
+                    <h1 class="brand-name">智能建造与产业链协同创新平台</h1>
+                    <span class="brand-name-en">Intelligent Construction & Industry Chain Innovation Platform</span>
+            </div>
+            </div>
+        </div>
+        <nav class="nav-container">
+                <ul id="navMenu">
+                <li><a href="/">首页</a></li>
+                <li><a href="/ai-design.html">AI方案设计</a></li>
+                <li><a href="/ai-center.html">AI联合设计中心</a></li>
+                <li><a href="/smart-factory.html">数智工厂</a></li>
+                <li><a href="/industrial-construction.html">工业化建造</a></li>
+                <li><a href="/insurance-platform.html">工程保险平台</a></li>
+                <li><a href="/talent-platform.html">产业人才平台</a></li>
+                <li><a href="/tech-innovation.html">创新技术转化</a></li>
+                <li><a href="/patent-platform.html">专利协作与维权平台</a></li>
+                </ul>
+            </nav>
+    </header>
+
+    <main>
+    <!-- Banner区域 -->
+        <div class="banner">
+            <canvas id="bannerCanvas" class="banner-background"></canvas>
+            <div class="banner-content">
+                <h1 class="platform-title">智能建造与产业链协同创新平台</h1>
+                <p class="platform-subtitle">Intelligent Construction & Industry Chain Innovation Platform</p>
+                <h2 class="slogan">让AI重构建造，让绿色赋能未来</h2>
+                <p class="sub-slogan">引领智能化、工业化、绿色化建设的核心平台</p>
+                <!-- 搜索框 -->
+                <div class="search-container">
+                    <input type="text" class="search-box" placeholder="搜索技术、课程、工厂..." id="globalSearch">
+                    <div class="search-results" id="searchResults">
+                        <!-- 技术库结果 -->
+                        <div class="result-section">
+                            <div class="section-title">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>相关技术</span>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-icon tech">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <div class="result-content">
+                                    <div class="result-title">模壳体系工艺</div>
+                                    <div class="result-desc">应用案例：XX项目群</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 课程推荐 -->
+                        <div class="result-section">
+                            <div class="section-title">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>推荐课程</span>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-icon course">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div class="result-content">
+                                    <div class="result-title">模壳施工认证班</div>
+                                    <div class="result-desc">20课时 | 认证考试</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 工厂推荐 -->
+                        <div class="result-section">
+                            <div class="section-title">
+                                <i class="fas fa-industry"></i>
+                                <span>合作工厂</span>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-icon factory">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="result-content">
+                                    <div class="result-title">江苏智聚智慧建筑</div>
+                                    <div class="result-desc">月产能：12000m³</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="javascript:void(0)" onclick="showConsultationModal()" class="cta-button">
+                    <i class="fas fa-comments"></i>
+                    免费咨询
+                </a>
+            </div>
+        </div>
+
+    <!-- 服务卡片区域 -->
+    <section class="services">
+            <div class="service-cards">
+                <!-- AI设计方案模块 -->
+                <div class="service-card ai" onclick="window.location.href='ai-design.html'">
+                    <i class="fas fa-robot"></i>
+                    <h2>AI设计</h2>
+                <p>智能化设计方案生成与优化</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">1200+</span>
+                            <span class="stat-label">方案生成</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">85%</span>
+                            <span class="stat-label">降本率</span>
+                        </div>
+                    </div>
+            </div>
+
+                <!-- AI联合设计中心模块 -->
+                <div class="service-card design" onclick="window.location.href='ai-center.html'">
+                    <i class="fas fa-drafting-compass"></i>
+                    <h2>联合设计</h2>
+                    <p>设计院协同创新平台</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">35</span>
+                            <span class="stat-label">合作设计院</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">180</span>
+                            <span class="stat-label">完成项目</span>
+                        </div>
+                    </div>
+            </div>
+
+                <!-- 数智工厂模块 -->
+                <div class="service-card factory" onclick="window.location.href='smart-factory.html'">
+                    <i class="fas fa-industry"></i>
+                    <h2>数智工厂</h2>
+                    <p>工厂产能监控与智能调度</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">25</span>
+                            <span class="stat-label">接入工厂</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">98%</span>
+                            <span class="stat-label">设备利用率</span>
+                        </div>
+                    </div>
+            </div>
+
+                <!-- 工业化建造模块 -->
+                <div class="service-card industrial" onclick="window.location.href='industrial-construction.html'">
+                    <i class="fas fa-industry"></i>
+                    <h2>工业化建造</h2>
+                    <p>智能建造与装配式建筑集成服务</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">30+</span>
+                            <span class="stat-label">合作企业</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">95%</span>
+                            <span class="stat-label">工业化率</span>
+                        </div>
+                    </div>
+            </div>
+
+                <!-- 产业人才平台模块 -->
+                <div class="service-card talent" onclick="window.location.href='talent-platform.html'">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h2>产业人才平台</h2>
+                    <p>专业人才培养与认证体系</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">3000+</span>
+                            <span class="stat-label">认证学员</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">98%</span>
+                            <span class="stat-label">就业率</span>
+                        </div>
+                    </div>
+            </div>
+
+                <!-- 创新技术模块 -->
+                <div class="service-card tech" onclick="window.location.href='tech-innovation.html'">
+                    <i class="fas fa-lightbulb"></i>
+                    <h2>创新技术</h2>
+                    <p>技术创新成果转化平台</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">128</span>
+                            <span class="stat-label">专利授权</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">56</span>
+                            <span class="stat-label">成果转化</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 专利协作模块 -->
+                <div class="service-card patent" onclick="window.location.href='patent-platform.html'">
+                    <i class="fas fa-gavel"></i>
+                    <h2>专利协作</h2>
+                    <p>专利运营与维权服务</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">15%</span>
+                            <span class="stat-label">收益分成</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">100%</span>
+                            <span class="stat-label">维权胜诉</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 工程保险模块 -->
+                <div class="service-card insurance" onclick="window.location.href='insurance-platform.html'">
+                    <i class="fas fa-shield-alt"></i>
+                    <h2>工程保险</h2>
+                    <p>全周期风险保障服务</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">500M</span>
+                            <span class="stat-label">承保额度</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">24h</span>
+                            <span class="stat-label">理赔时效</span>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </section>
+    </main>
+
+    <footer>
+        <p>© 2024 智建云链. All rights reserved.</p>
+    </footer>
+
+    <!-- 添加遮罩层元素 -->
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        // 确保页面完全加载后再执行
+        window.onload = function() {
+            if (typeof THREE === 'undefined') {
+                console.error('Three.js未加载');
+                // 尝试手动加载
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js';
+                script.onload = function() {
+                    console.log('Three.js已手动加载');
+                    initThreeJS();
+                    initParticles();
+                };
+                document.head.appendChild(script);
+            } else {
+                console.log('Three.js已加载');
+                initThreeJS();
+                initParticles();
+            }
+        };
+        
+        // 初始化Three.js
+        function initThreeJS() {
+            console.log('初始化Three.js');
+            try {
+                // 检查Three.js是否加载
+                if (typeof THREE === 'undefined') {
+                    console.error('Three.js未加载');
+                    return;
+                }
+                
+                const bannerElement = document.querySelector('.banner');
+                if (!bannerElement) {
+                    console.error('找不到Banner元素');
+                    return;
+                }
+                
+                // 创建场景
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, bannerElement.offsetWidth / bannerElement.offsetHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                
+                // 设置渲染器
+                renderer.setSize(bannerElement.offsetWidth, bannerElement.offsetHeight);
+                renderer.setClearColor(0x000000, 0);
+                
+                // 添加到DOM
+                renderer.domElement.style.position = 'absolute';
+                renderer.domElement.style.top = '0';
+                renderer.domElement.style.left = '0';
+                renderer.domElement.style.width = '100%';
+                renderer.domElement.style.height = '100%';
+                renderer.domElement.style.zIndex = '1';
+                renderer.domElement.style.pointerEvents = 'none';
+                bannerElement.appendChild(renderer.domElement);
+                
+                // 创建简化的齿轮模型
+                const geometry = new THREE.CylinderGeometry(5, 5, 2, 12, 1);
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0x2A5CAA,
+                    transparent: true,
+                    opacity: 0.5,
+                    wireframe: true
+                });
+                
+                const gear = new THREE.Mesh(geometry, material);
+                scene.add(gear);
+                
+                camera.position.z = 15;
+                
+                // 动画循环
+                function animate() {
+                    requestAnimationFrame(animate);
+                    gear.rotation.x += 0.01;
+                    gear.rotation.y += 0.01;
+                    renderer.render(scene, camera);
+                }
+                
+                // 开始动画
+                animate();
+                
+                // 响应窗口变化
+                window.addEventListener('resize', () => {
+                    camera.aspect = bannerElement.offsetWidth / bannerElement.offsetHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(bannerElement.offsetWidth, bannerElement.offsetHeight);
+                });
+                
+                console.log('Three.js初始化成功');
+            } catch (error) {
+                console.error('Three.js初始化失败:', error);
+            }
+        }
+        
+        // 初始化粒子效果
+        function initParticles() {
+            console.log('初始化粒子效果');
+            try {
+                const bannerElement = document.querySelector('.banner');
+                if (!bannerElement) {
+                    console.error('找不到Banner元素');
+                    return;
+                }
+                
+                // 创建Canvas元素
+                const canvas = document.createElement('canvas');
+                canvas.style.position = 'absolute';
+                canvas.style.top = '0';
+                canvas.style.left = '0';
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.style.zIndex = '2';
+                canvas.style.pointerEvents = 'none';
+                
+                // 获取2D上下文
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('无法获取Canvas 2D上下文');
+                    return;
+                }
+                
+                // 设置Canvas尺寸
+                canvas.width = bannerElement.offsetWidth;
+                canvas.height = bannerElement.offsetHeight;
+                
+                // 添加到DOM
+                bannerElement.style.position = 'relative';
+                bannerElement.style.overflow = 'hidden';
+                bannerElement.appendChild(canvas);
+                
+                // 粒子类
+                class Particle {
+                    constructor() {
+                        this.reset();
+                    }
+                    
+                    reset() {
+                        this.x = Math.random() * canvas.width;
+                        this.y = Math.random() * canvas.height;
+                        this.speed = 0.5 + Math.random() * 1;
+                        this.radius = 1 + Math.random() * 2;
+                        this.direction = Math.random() * Math.PI * 2;
+                    }
+                    
+                    update() {
+                        this.x += Math.cos(this.direction) * this.speed;
+                        this.y += Math.sin(this.direction) * this.speed;
+                        
+                        // 边界检查
+                        if (this.x < 0 || this.x > canvas.width || 
+                            this.y < 0 || this.y > canvas.height) {
+                            this.reset();
+                        }
+                    }
+                    
+                    draw(color) {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = color;
+                        ctx.fill();
+                    }
+                }
+                
+                // 创建粒子
+                const particles = Array(30).fill().map(() => new Particle());
+                
+                // 动画循环
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // 计算颜色渐变
+                    const scrollPercent = Math.min(1, window.scrollY / (document.body.scrollHeight - window.innerHeight));
+                    const startColor = [42, 92, 170]; // #2A5CAA
+                    const endColor = [76, 175, 80];   // #4CAF50
+                    
+                    particles.forEach(particle => {
+                        particle.update();
+                        
+                        // 混合颜色
+                        const color = startColor.map((start, i) => 
+                            Math.round(start + (endColor[i] - start) * scrollPercent)
+                        );
+                        
+                        particle.draw(`rgba(${color.join(',')}, 0.6)`);
+                    });
+                    
+                    requestAnimationFrame(animate);
+                }
+                
+                // 开始动画
+                animate();
+                
+                // 响应窗口变化
+                window.addEventListener('resize', () => {
+                    canvas.width = bannerElement.offsetWidth;
+                    canvas.height = bannerElement.offsetHeight;
+                });
+                
+                console.log('粒子效果初始化成功');
+            } catch (error) {
+                console.error('粒子效果初始化失败:', error);
+            }
+        }
+        
+        // 初始化交互功能
+        function initInteractions() {
+            // 移动菜单交互
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const navMenu = document.getElementById('navMenu');
+            const overlay = document.getElementById('overlay');
+            
+            navMenu.classList.toggle('active');
+            
+            if (navMenu.classList.contains('active')) {
+                overlay.style.display = 'block';
+            } else {
+                overlay.style.display = 'none';
+            }
+        });
+
+        // 点击遮罩关闭菜单
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('navMenu').classList.remove('active');
+            this.style.display = 'none';
+        });
+
+            // 卡片点击反馈
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const moduleName = this.querySelector('h2').textContent;
+                    console.log(`进入${moduleName}页面`);
+                });
+            });
+        }
+
+        // 初始化动态背景
+        function initDynamicBackground() {
+            const canvas = document.getElementById('bannerCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 设置canvas尺寸
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // 圆球类
+            class Circle {
+                constructor() {
+                    this.reset();
+                }
+
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = 5 + Math.random() * 8;
+                    this.speedX = (Math.random() - 0.5) * 2;
+                    this.speedY = (Math.random() - 0.5) * 2;
+                    this.opacity = 0.1 + Math.random() * 0.4;
+                }
+
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+
+                    // 边界检查
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            // 创建圆球
+            const circles = Array(50).fill().map(() => new Circle());
+
+            // 连线函数
+            function drawLines() {
+                circles.forEach((circle1, i) => {
+                    circles.slice(i + 1).forEach(circle2 => {
+                        const dx = circle1.x - circle2.x;
+                        const dy = circle1.y - circle2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(circle1.x, circle1.y);
+                            ctx.lineTo(circle2.x, circle2.y);
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 * (1 - distance/150)})`;
+                            ctx.stroke();
+                        }
+                    });
+                });
+            }
+
+            // 动画循环
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                circles.forEach(circle => {
+                    circle.update();
+                    circle.draw();
+                });
+                
+                drawLines();
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', initDynamicBackground);
+
+        // 全局搜索功能
+        document.getElementById('globalSearch').addEventListener('input', function(e) {
+            const searchResults = document.getElementById('searchResults');
+            if (e.target.value.length > 0) {
+                searchResults.classList.add('active');
+                // 这里可以添加实际的搜索逻辑
+                } else {
+                searchResults.classList.remove('active');
+            }
+        });
+
+        // 点击外部关闭搜索结果
+        document.addEventListener('click', function(e) {
+            const searchContainer = document.querySelector('.search-container');
+            const searchResults = document.getElementById('searchResults');
+            if (!searchContainer.contains(e.target)) {
+                searchResults.classList.remove('active');
+            }
+        });
+
+        // 添加咨询功能
+        function showConsultationModal() {
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '50%';
+            modal.style.left = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
+            modal.style.backgroundColor = 'white';
+            modal.style.padding = '30px';
+            modal.style.borderRadius = '15px';
+            modal.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
+            modal.style.zIndex = '1000';
+            modal.style.maxWidth = '90%';
+            modal.style.width = '400px';
+
+            // 添加内容
+            modal.innerHTML = `
+                <h2 style="color: #2A5CAA; margin-bottom: 20px; font-size: 24px;">
+                    <i class="fas fa-headset" style="margin-right: 10px;"></i>
+                    联系我们
+                </h2>
+                <p style="color: #666; margin-bottom: 15px;">请留下您的联系方式，我们会尽快与您联系。</p>
+                <form id="consultationForm" style="display: flex; flex-direction: column; gap: 15px;">
+                    <input type="text" placeholder="您的称呼" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    <input type="tel" placeholder="联系电话" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    <textarea placeholder="咨询内容（选填）" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; height: 100px; resize: none;"></textarea>
+                    <button type="submit" style="background: linear-gradient(135deg, #2A5CAA 0%, #4CAF50 100%); color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                        提交咨询
+                    </button>
+                </form>
+                <button onclick="this.parentElement.remove();document.getElementById('modalOverlay').remove();" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 20px; cursor: pointer; color: #666;">
+                    ×
+                </button>
+            `;
+
+            // 创建遮罩
+            const overlay = document.createElement('div');
+            overlay.id = 'modalOverlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            overlay.style.zIndex = '999';
+
+            // 添加到页面
+            document.body.appendChild(overlay);
+            document.body.appendChild(modal);
+
+            // 添加表单提交事件
+            document.getElementById('consultationForm').onsubmit = function(e) {
+                e.preventDefault();
+                alert('感谢您的咨询，我们会尽快与您联系！');
+                modal.remove();
+                overlay.remove();
+            };
+
+            // 点击遮罩关闭模态框
+            overlay.onclick = function() {
+                modal.remove();
+                overlay.remove();
+            };
+        }
+    </script>
+</body>
+</html>

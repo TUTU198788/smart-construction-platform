@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作抽签 - 快乐抽签平台</title>
+    <style>
+        :root {
+            --primary-color: #00BFFF;
+            --secondary-color: #1E90FF;
+            --background-color: #000;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+                        url('https://img.freepik.com/free-vector/digital-technology-background-with-abstract-wave-border_53876-117508.jpg');
+            background-size: cover;
+            font-family: 'Microsoft YaHei', sans-serif;
+            color: white;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--primary-color);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: var(--primary-color);
+            color: black;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .prize-input-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .prize-input {
+            width: 80%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: 10px;
+            font-size: 1.1em;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .prize-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .name-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .name-card {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .name-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+
+        .name-card.selected {
+            background: var(--primary-color);
+            border-color: white;
+        }
+
+        .draw-button {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 15px 30px;
+            border: 2px solid var(--primary-color);
+            border-radius: 25px;
+            background: transparent;
+            color: var(--primary-color);
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .draw-button:hover {
+            background: var(--primary-color);
+            color: black;
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 30px;
+            min-height: 50px;
+            color: var(--primary-color);
+        }
+
+        /* 科技感装饰元素 */
+        .tech-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .tech-line {
+            position: absolute;
+            background: var(--primary-color);
+            opacity: 0.2;
+            animation: techMove 3s linear infinite;
+        }
+
+        @keyframes techMove {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='index.html'">返回主页</button>
+    
+    <div class="header">
+        <h1>工作抽签</h1>
+        <p>智能任务分配系统</p>
+    </div>
+
+    <div class="container">
+        <div class="prize-input-container">
+            <h3>请输入任务内容</h3>
+            <input type="text" class="prize-input" placeholder="例如：项目演示">
+        </div>
+
+        <div class="name-cards">
+            <div class="name-card" data-name="陈晨">陈晨</div>
+            <div class="name-card" data-name="王璐">王璐</div>
+            <div class="name-card" data-name="易鼎鼎">易鼎鼎</div>
+            <div class="name-card" data-name="卞子文">卞子文</div>
+            <div class="name-card" data-name="周林杰">周林杰</div>
+            <div class="name-card" data-name="郭长卫">郭长卫</div>
+            <div class="name-card" data-name="江雯">江雯</div>
+            <div class="name-card" data-name="黄丹丹">黄丹丹</div>
+            <div class="name-card" data-name="葛小春">葛小春</div>
+        </div>
+
+        <button class="draw-button">开始抽签</button>
+        <div class="result"></div>
+    </div>
+
+    <div class="tech-lines"></div>
+
+    <script>
+        // 添加科技感装饰元素
+        function addTechLines() {
+            const techLines = document.querySelector('.tech-lines');
+            for (let i = 0; i < 20; i++) {
+                const line = document.createElement('div');
+                line.className = 'tech-line';
+                line.style.left = Math.random() * 100 + 'vw';
+                line.style.width = '1px';
+                line.style.height = '50px';
+                line.style.animationDelay = Math.random() * 3 + 's';
+                techLines.appendChild(line);
+            }
+        }
+
+        // 抽签逻辑
+        const cards = document.querySelectorAll('.name-card');
+        const drawButton = document.querySelector('.draw-button');
+        const result = document.querySelector('.result');
+        let isDrawing = false;
+
+        drawButton.addEventListener('click', () => {
+            if (isDrawing) return;
+            isDrawing = true;
+            drawButton.textContent = '分配中...';
+
+            const taskText = document.querySelector('.prize-input').value;
+            
+            cards.forEach(card => card.classList.remove('selected'));
+            result.textContent = '';
+
+            let flashCount = 0;
+            const maxFlashes = 15;
+            const flashInterval = setInterval(() => {
+                cards.forEach(card => card.classList.remove('selected'));
+                const randomCard = cards[Math.floor(Math.random() * cards.length)];
+                randomCard.classList.add('selected');
+
+                flashCount++;
+                if (flashCount >= maxFlashes) {
+                    clearInterval(flashInterval);
+                    setTimeout(() => {
+                        const selectedCard = cards[Math.floor(Math.random() * cards.length)];
+                        cards.forEach(card => card.classList.remove('selected'));
+                        selectedCard.classList.add('selected');
+                        result.textContent = taskText ? 
+                            `任务「${taskText}」已分配给：${selectedCard.dataset.name}` :
+                            `已选定：${selectedCard.dataset.name}`;
+                        drawButton.textContent = '重新分配';
+                        isDrawing = false;
+                    }, 500);
+                }
+            }, 150);
+        });
+
+        // 初始化装饰
+        addTechLines();
+    </script>
+</body>
+</html> 

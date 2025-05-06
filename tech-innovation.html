@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创新技术转化 - 智建云链</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 继承基础样式 */
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 400;
+            src: url(https://fonts.gstatic.com/s/notosanssc/v12/k3kXo84MPvpLmixcA63oeALhL4iJ-Q7m8w.woff2) format('woff2');
+        }
+
+        :root {
+            --primary-color: #2A5CAA; /* 主蓝色 */
+            --secondary-color: #1E3D6B; /* 深蓝色 */
+            --accent-color: #4A90E2; /* 浅蓝色 */
+            --background-color: #f5f5f5; /* 淡灰背景 */
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --border-color: #ddd;
+            --success-color: #4CAF50;
+            --warning-color: #FFC107;
+            --error-color: #f44336;
+            --tech-blue: #2A5CAA; /* 主蓝色 */
+            --tech-light-blue: #4A90E2; /* 浅蓝色 */
+            --tech-dark-blue: #1E3D6B; /* 深蓝色 */
+            --tech-gradient: linear-gradient(135deg, #2A5CAA 0%, #4A90E2 100%); /* 蓝色渐变 */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding-top: 60px;
+            background: #f5f5f5;
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 顶部导航栏动效 */
+        header {
+            background: var(--tech-gradient);
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 8px 0;
+            background: rgba(42, 92, 170, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo-image {
+            height: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* LOGO样式更新 */
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap;
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .logo-en {
+            font-size: 12px;
+            margin-left: 0;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        a.logo-container:hover .logo-en {
+            opacity: 1;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            -ms-overflow-style: none;
+        }
+
+        nav ul::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        nav ul::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+            padding: 6px 10px;
+            border-radius: var(--border-radius);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        nav a:hover::after {
+            width: 80%;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        nav a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 30px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .menu-toggle span:nth-child(1) {
+            top: 0;
+        }
+
+        .menu-toggle span:nth-child(2) {
+            top: 9px;
+        }
+
+        .menu-toggle span:nth-child(3) {
+            top: 18px;
+        }
+        
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg);
+            top: 9px;
+        }
+        
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg);
+            top: 9px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            nav ul {
+                position: absolute;
+                right: 0;
+                top: 60px;
+                background-color: rgba(0, 0, 0, 0.9);
+                flex-direction: column;
+                width: 50%;
+                transform: translateX(100%);
+                transition: transform 0.5s ease-in;
+                padding: 2rem;
+                z-index: 999;
+            }
+
+            nav ul.active {
+                transform: translateX(0%);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        /* 技术分区样式 */
+        .tech-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .tech-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            border-bottom: 2px solid #2A5CAA;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            color: #2A5CAA;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* 技术卡片样式 */
+        .tech-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.3s;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .tech-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .tech-info {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .tech-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #4CAF50;
+        }
+
+        .tech-stats i {
+            margin-right: 5px;
+        }
+
+        .patent-number {
+            color: #2A5CAA;
+            font-family: monospace;
+        }
+
+        /* 引用按钮样式 */
+        .cite-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #2A5CAA;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .cite-btn:hover {
+            background: #4CAF50;
+        }
+
+        /* 筛选器样式 */
+        .filters {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: #2A5CAA;
+            color: white;
+            border-color: #2A5CAA;
+        }
+
+        /* 应用统计样式 */
+        .stats-banner {
+            background: linear-gradient(135deg, #2A5CAA 0%, #4CAF50 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header>
+        <nav>
+            <a href="/" class="logo-container">
+                <svg width="40" height="40" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="25" cy="25" r="20" fill="#2A5CAA"/>
+                    <circle cx="25" cy="25" r="15" fill="none" stroke="#ffffff" stroke-width="2"/>
+                    <circle cx="25" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="18" r="3" fill="#ffffff"/>
+                    <circle cx="18" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="32" cy="32" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="10" r="3" fill="#ffffff"/>
+                    <circle cx="40" cy="25" r="3" fill="#ffffff"/>
+                    <circle cx="25" cy="40" r="3" fill="#ffffff"/>
+                    <circle cx="10" cy="25" r="3" fill="#ffffff"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>智建云链</h1>
+                    <p class="logo-en">SmartBuildChain</p>
+                </div>
+            </a>
+            <ul>
+                <li><a href="/">首页</a></li>
+                <li><a href="/ai-design.html">AI方案设计</a></li>
+                <li><a href="/ai-center.html">AI联合设计中心</a></li>
+                <li><a href="/smart-factory.html">数智工厂</a></li>
+                <li><a href="/industrial-construction.html">工业化建造</a></li>
+                <li><a href="/insurance-platform.html">工程保险平台</a></li>
+                <li><a href="/talent-platform.html">产业人才平台</a></li>
+                <li><a href="/tech-innovation.html" class="active">创新技术转化</a></li>
+                <li><a href="/patent-platform.html">专利协作与维权平台</a></li>
+            </ul>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        <!-- 应用统计 -->
+        <div class="stats-banner">
+            <div class="stat-item">
+                <div class="stat-number">256</div>
+                <div class="stat-label">已转化技术</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">128</div>
+                <div class="stat-label">专利授权</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1024</div>
+                <div class="stat-label">项目应用</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">85%</div>
+                <div class="stat-label">降本率</div>
+            </div>
+        </div>
+
+        <!-- 筛选器 -->
+        <div class="filters">
+            <button class="filter-btn active">全部技术</button>
+            <button class="filter-btn">结构技术</button>
+            <button class="filter-btn">维护技术</button>
+            <button class="filter-btn">施工技术</button>
+        </div>
+
+        <!-- 技术分区 -->
+        <div class="tech-sections">
+            <!-- 结构技术分区 -->
+            <div class="tech-section">
+                <div class="section-header">
+                    <h2 class="section-title">结构技术</h2>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-name">新型承重抗侧体系</div>
+                    <div class="tech-info">创新型框架-剪力墙混合结构体系，提高抗震性能</div>
+                    <div class="tech-stats">
+                        <span><i class="fas fa-check-circle"></i>已应用100+项目</span>
+                        <span class="patent-number">专利号：ZL2024XXXXXX</span>
+                    </div>
+                    <button class="cite-btn">引用该技术</button>
+                </div>
+                <!-- 更多技术卡片... -->
+            </div>
+
+            <!-- 维护技术分区 -->
+            <div class="tech-section">
+                <div class="section-header">
+                    <h2 class="section-title">维护技术</h2>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-name">装配式外墙系统</div>
+                    <div class="tech-info">预制保温装饰一体化外墙板，提高施工效率30%</div>
+                    <div class="tech-stats">
+                        <span><i class="fas fa-check-circle"></i>已应用50+项目</span>
+                        <span class="patent-number">专利号：ZL2024XXXXXX</span>
+                    </div>
+                    <button class="cite-btn">引用该技术</button>
+                </div>
+                <!-- 更多技术卡片... -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 移动端导航菜单
+        function initResponsiveNav() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('nav ul');
+            const overlay = document.querySelector('.overlay');
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                    overlay.style.display = navLinks.classList.contains('active') ? 'block' : 'none';
+                });
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    menuToggle.classList.remove('active');
+                    navLinks.classList.remove('active');
+                    this.style.display = 'none';
+                });
+            }
+        }
+
+        // 滚动时导航栏效果
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initResponsiveNav();
+        });
+
+        // 筛选按钮切换
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                // 这里添加筛选逻辑
+            });
+        });
+
+        // 引用按钮点击效果
+        document.querySelectorAll('.cite-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 这里添加引用逻辑
+                alert('技术引用功能即将上线');
+            });
+        });
+    </script>
+</body>
+</html> 
