@@ -3,2773 +3,1359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>梯桁筋与组合肋可视化管理系统</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/responsive.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS for Excel reading -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <meta name="description" content="智建云链 - 智能建造与产业链协同创新平台">
+    <title>智建云链 - 智能建造与产业链协同创新平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Han Sans', "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            padding-top: 120px;  /* 根据实际头部高度调整 */
+        }
+
+        /* 页面头部容器 */
+        .page-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: #ffffff;
+        }
+
+        /* 品牌区域样式 */
+        .brand-area {
+            background: #ffffff;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .brand-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .logo-wrapper {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .brand-name {
+            color: #333333;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .brand-name-en {
+            color: #666666;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        /* 导航菜单样式优化 */
+        .nav-container {
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            padding: 0;
+        }
+
+        #navMenu {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+        }
+
+        #navMenu li {
+            position: relative;
+        }
+
+        #navMenu li a {
+            color: #333333;
+            text-decoration: none;
+            font-size: 15px;
+            padding: 15px 0;
+            transition: color 0.3s ease;
+            display: block;
+        }
+
+        #navMenu li a:hover {
+            color: #2A5CAA;
+        }
+
+        #navMenu li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #2A5CAA;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        #navMenu li a:hover::after {
+            transform: scaleX(1);
+        }
+
+        #navMenu li a.active {
+            color: #2A5CAA;
+        }
+
+        #navMenu li a.active::after {
+            transform: scaleX(1);
+        }
+
+        /* 搜索框优化 */
+        .search-bar {
+            border-radius: 20px;
+            padding: 8px 16px;
+            border: 1px solid #E2E8F0;
+            background: #F7FAFC;
+            width: 240px;
+            outline: none;
+        }
+
+        .search-bar:focus {
+            border-color: #48BB78;
+            box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.2);
+        }
+
+        /* 汉堡菜单按钮 */
+        .menu-toggle {
+            display: none;
+            width: 30px;
+            height: 30px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-toggle::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: white;
+            box-shadow: 0 -8px 0 white, 0 8px 0 white;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* 内容区域 */
+        main {
+            margin-top: 60px;
+            padding: 20px;
+        }
+
+        /* Banner区域 */
+        .banner {
+            background: linear-gradient(135deg, #2A5CAA 0%, #00A0B0 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+            overflow: hidden;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .platform-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .platform-subtitle {
+            font-size: 1.5em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+        }
+
+        .slogan {
+            font-size: 2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .sub-slogan {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+        }
+
+        /* 动态背景 */
+        .banner-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .banner h1 {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 30% 50%, rgba(42, 92, 170, 0.4) 0%, transparent 70%),
+                              radial-gradient(circle at 70% 50%, rgba(76, 175, 80, 0.4) 0%, transparent 70%);
+            animation: pulse 8s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        /* 服务卡片区域 */
+        .services {
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        /* 服务卡片样式 */
+        .service-card {
+            background: #F5F5F5;
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            padding-top: 40px;
+        }
+
+        .service-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card h2 {
+            color: #2A5CAA;
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            color: #666;
+        }
+
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #666;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #2A5CAA;
+                flex-direction: column;
+                padding: 10px 0;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            nav li {
+                width: 100%;
+                text-align: center;
+                padding: 10px 0;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .service-card {
+                text-align: left;
+            }
+
+            .service-card i {
+                font-size: 24px;
+            }
+        }
+
+        /* 添加思源黑体 */
+        @font-face {
+            font-family: 'Source Han Sans';
+            src: url('path/to/SourceHanSansCN-Regular.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* Logo SVG样式 */
+        .logo-svg {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        /* Logo容器样式 */
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        /* 服务卡片图标样式优化 */
+        .service-card i {
+            font-size: 32px;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* 模块主题色 */
+        .service-card.ai i { color: #2A5CAA; }
+        .service-card.factory i { color: #4CAF50; }
+        .service-card.insurance i { color: #FF6D00; }
+        .service-card.talent i { color: #FF9800; }
+        .service-card.patent i { color: #E91E63; }
+        .service-card.industrial i { color: #673AB7; }
+
+        /* 遮罩层样式 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 90;
+        }
+
+        .banner canvas {
+            display: block !important;
+            z-index: 5 !important;
+        }
+
+        /* 强制显示Canvas */
+        canvas {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .banner {
+            position: relative !important;
+            overflow: visible !important;
+        }
+
+        /* 思源黑体字体引入 */
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 300;
+            src: url(https://fonts.gstatic.com/s/notosanssc/v12/k3kIo84MPvpLmixcA63oeALZhaCt9E3g-Lbpcnr20eUBAZG.woff2) format('woff2');
+        }
+
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 400;
+            src: url(https://fonts.gstatic.com/s/notosanssc/v12/k3kXo84MPvpLmixcA63oeALhL4iJ-Q7m8w.woff2) format('woff2');
+        }
+
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 700;
+            src: url(https://fonts.gstatic.com/s/notosanssc/v12/k3kIo84MPvpLmixcA63oeALZlaet9E3g-Lbpcnr20eUBAZG.woff2) format('woff2');
+        }
+
+        /* 应用字体到标题和导航 */
+        h1, nav a { 
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 700; /* 标题加粗 */
+        }
+
+        /* 其他文本使用常规字重 */
+        p, .service-card h2 {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 400;
+        }
+
+        /* 轻量文本 */
+        .logo-en, footer p {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 300;
+        }
+
+        .service-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .service-card i {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2A5CAA;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 模块主题色 */
+        .service-card.ai i { color: #2A5CAA; }
+        .service-card.factory i { color: #4CAF50; }
+        .service-card.insurance i { color: #FF6D00; }
+        .service-card.tech i { color: #2196F3; }
+        .service-card.design i { color: #E91E63; }
+        .service-card.patent i { color: #673AB7; }
+
+        /* 添加工业化建造模块的主题色 */
+        .service-card.industrial i { 
+            color: #FF6B6B; /* 使用醒目的红色调 */
+        }
+
+        .service-card.industrial:hover {
+            border-color: #FF6B6B;
+        }
+
+        /* 添加产业人才平台模块的主题色 */
+        .service-card.talent i {
+            color: #FF9800; /* 使用温暖的橙色调 */
+        }
+
+        .service-card.talent:hover {
+            border-color: #FF9800;
+        }
+
+        /* 搜索栏样式 */
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 30px auto;
+            z-index: 3;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 搜索结果面板 */
+        .search-results {
+                position: absolute;
+                top: 100%;
+                left: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+            overflow: hidden;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .result-section {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+                display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            font-size: 16px;
+        }
+
+        .result-item {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .result-item:hover {
+            background: #f5f5f5;
+        }
+
+        .result-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .result-icon.tech { background: #2A5CAA; }
+        .result-icon.course { background: #FF9800; }
+        .result-icon.factory { background: #4CAF50; }
+
+        /* 添加咨询按钮样式 */
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            margin-top: 30px;
+            font-size: 18px;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(135deg, #4CAF50 0%, #2A5CAA 100%);
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(42, 92, 170, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(42, 92, 170, 0.4);
+            background: linear-gradient(135deg, #2A5CAA 0%, #4CAF50 100%);
+        }
+
+        .cta-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(42, 92, 170, 0.3);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* 添加按钮内部图标样式 */
+        .cta-button i {
+            margin-right: 8px;
+            font-size: 20px;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
-    <!-- 顶部导航栏 -->
-    <header class="header">
-        <div class="header-container">
-            <div class="logo-section">
-                <i class="fas fa-industry"></i>
-                <h1>梯桁筋与组合肋可视化管理系统</h1>
+    <!-- 标题栏 -->
+    <header class="page-header">
+        <div class="brand-area">
+            <div class="brand-container">
+                <div class="logo-wrapper">
+                    <svg class="brand-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 中心蓝色圆圈 -->
+                        <circle cx="100" cy="100" r="30" fill="#2A5CAA"/>
+                        <!-- 外围绿色圆环 -->
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#4CAF50" stroke-width="2"/>
+                        <!-- 黄色圆点 - 大尺寸（上下） -->
+                        <circle cx="100" cy="20" r="15" fill="#FFD700"/>
+                        <circle cx="100" cy="180" r="15" fill="#FFD700"/>
+                        
+                        <!-- 黄色圆点 - 中尺寸（对角） -->
+                        <circle cx="165" cy="35" r="12" fill="#FFD700"/>
+                        <circle cx="165" cy="165" r="12" fill="#FFD700"/>
+                        <circle cx="35" cy="165" r="12" fill="#FFD700"/>
+                        <circle cx="35" cy="35" r="12" fill="#FFD700"/>
+                        
+                        <!-- 黄色圆点 - 小尺寸（左右） -->
+                        <circle cx="180" cy="100" r="10" fill="#FFD700"/>
+                        <circle cx="20" cy="100" r="10" fill="#FFD700"/>
+                        
+                        <!-- 连接线 -->
+                        <line x1="100" y1="70" x2="100" y2="20" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="130" y1="100" x2="180" y2="100" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="100" y1="130" x2="100" y2="180" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="70" y1="100" x2="20" y2="100" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="122" y1="78" x2="165" y2="35" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="122" y1="122" x2="165" y2="165" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="78" y1="122" x2="35" y2="165" stroke="#4CAF50" stroke-width="2"/>
+                        <line x1="78" y1="78" x2="35" y2="35" stroke="#4CAF50" stroke-width="2"/>
+                </svg>
+                </div>
+                <div class="brand-text">
+                    <h1 class="brand-name">智能建造与产业链协同创新平台</h1>
+                    <span class="brand-name-en">Intelligent Construction & Industry Chain Innovation Platform</span>
             </div>
-            <div class="header-actions">
-                <div class="status-indicator">
-                    <span class="status-dot active"></span>
-                    <span>实时监控</span>
-                </div>
-                <button class="refresh-btn" id="refreshBtn">
-                    <i class="fas fa-sync-alt"></i>
-                    刷新数据
-                </button>
-                <div class="connection-status info" id="connectionStatus">
-                    检查中...
-                </div>
-                <button class="cloud-sync-btn" id="cloudSyncBtn" title="云端同步设置">
-                    <i class="fas fa-cloud"></i>
-                    云端同步
-                </button>
-                <div class="last-update">
-                    最后更新: <span id="lastUpdate">2024-01-15 14:30:25</span>
-                </div>
             </div>
         </div>
+        <nav class="nav-container">
+                <ul id="navMenu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="ai-design.html">AI方案设计</a></li>
+                <li><a href="ai-center.html">AI联合设计中心</a></li>
+                <li><a href="smart-factory.html">数智工厂</a></li>
+                <li><a href="industrial-construction.html">工业化建造</a></li>
+                <li><a href="insurance-platform.html">工程保险平台</a></li>
+                <li><a href="talent-platform.html">产业人才平台</a></li>
+                <li><a href="tech-innovation.html">创新技术转化</a></li>
+                <li><a href="patent-platform.html">专利协作与维权平台</a></li>
+                </ul>
+            </nav>
     </header>
 
-    <!-- 主要内容区域 -->
-    <main class="main-content">
-        <!-- 关键指标卡片区 -->
-        <section class="metrics-section">
-            <div class="metrics-container">
-                <!-- 第一行：原有的四个卡片 -->
-                <div class="metrics-row">
-                    <div class="metric-card total">
-                        <div class="metric-icon">
-                            <i class="fas fa-cubes"></i>
+    <main>
+    <!-- Banner区域 -->
+        <div class="banner">
+            <canvas id="bannerCanvas" class="banner-background"></canvas>
+            <div class="banner-content">
+                <h1 class="platform-title">智能建造与产业链协同创新平台</h1>
+                <p class="platform-subtitle">Intelligent Construction & Industry Chain Innovation Platform</p>
+                <h2 class="slogan">让AI重构建造，让绿色赋能未来</h2>
+                <p class="sub-slogan">引领智能化、工业化、绿色化建设的核心平台</p>
+                <!-- 搜索框 -->
+                <div class="search-container">
+                    <input type="text" class="search-box" placeholder="搜索技术、课程、工厂..." id="globalSearch">
+                    <div class="search-results" id="searchResults">
+                        <!-- 技术库结果 -->
+                        <div class="result-section">
+                            <div class="section-title">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>相关技术</span>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-icon tech">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <div class="result-content">
+                                    <div class="result-title">模壳体系工艺</div>
+                                    <div class="result-desc">应用案例：XX项目群</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="metric-content">
-                            <h3>总需求量</h3>
-                            <div class="metric-value" id="totalDemand">0</div>
-                            <div class="metric-unit">米 (m)</div>
-                            <div class="metric-subtitle">计划生产总量</div>
+                        <!-- 课程推荐 -->
+                        <div class="result-section">
+                            <div class="section-title">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>推荐课程</span>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-icon course">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div class="result-content">
+                                    <div class="result-title">模壳施工认证班</div>
+                                    <div class="result-desc">20课时 | 认证考试</div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="metric-card produced">
-                        <div class="metric-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="metric-content">
-                            <h3>已生产量</h3>
-                            <div class="metric-value" id="totalProduced">0</div>
-                            <div class="metric-unit">米 (m)</div>
-                            <div class="metric-subtitle">累计完成生产</div>
-                        </div>
-                    </div>
-
-                    <div class="metric-card pending">
-                        <div class="metric-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="metric-content">
-                            <h3>待生产量</h3>
-                            <div class="metric-value" id="totalPending">0</div>
-                            <div class="metric-unit">米 (m)</div>
-                            <div class="metric-subtitle">剩余生产任务</div>
-                        </div>
-                    </div>
-
-                    <div class="metric-card efficiency">
-                        <div class="metric-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="metric-content">
-                            <h3>生产进度</h3>
-                            <div class="metric-value" id="productionProgress">0%</div>
-                            <div class="metric-subtitle">完成率统计</div>
-                            <div class="progress-ring">
-                                <svg class="progress-ring-svg" width="60" height="60">
-                                    <circle class="progress-ring-circle-bg" cx="30" cy="30" r="26"></circle>
-                                    <circle class="progress-ring-circle" cx="30" cy="30" r="26"
-                                            stroke-dasharray="163.36" stroke-dashoffset="163.36" id="progressCircle"></circle>
-                                </svg>
-                                <div class="progress-text" id="progressText">0%</div>
+                        <!-- 工厂推荐 -->
+                        <div class="result-section">
+                            <div class="section-title">
+                                <i class="fas fa-industry"></i>
+                                <span>合作工厂</span>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-icon factory">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="result-content">
+                                    <div class="result-title">江苏智聚智慧建筑</div>
+                                    <div class="result-desc">月产能：12000m³</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- 第二行：新增的四个卡片 -->
-                <div class="metrics-row">
-                    <div class="metric-card shipped">
-                        <div class="metric-icon">
-                            <i class="fas fa-truck"></i>
-                        </div>
-                        <div class="metric-content">
-                            <h3>已发货量</h3>
-                            <div class="metric-value" id="totalShipped">0</div>
-                            <div class="metric-unit">米 (m)</div>
-                            <div class="metric-subtitle">累计发货数量</div>
-                        </div>
-                    </div>
-
-                    <div class="metric-card unshipped">
-                        <div class="metric-icon">
-                            <i class="fas fa-warehouse"></i>
-                        </div>
-                        <div class="metric-content">
-                            <h3>未发货量</h3>
-                            <div class="metric-value" id="totalUnshipped">0</div>
-                            <div class="metric-unit">米 (m)</div>
-                            <div class="metric-subtitle">待发货库存</div>
-                        </div>
-                    </div>
-
-                    <div class="metric-card material" id="materialCard" style="cursor: pointer;" title="点击管理原材料采购">
-                        <div class="metric-icon">
-                            <i class="fas fa-industry"></i>
-                        </div>
-                        <div class="metric-content">
-                            <h3>原材采购</h3>
-                            <div class="metric-value" id="totalMaterial">0</div>
-                            <div class="metric-unit">吨 (t)</div>
-                            <div class="metric-subtitle">累计采购量</div>
-                        </div>
-                    </div>
-
-                    <div class="metric-card inventory">
-                        <div class="metric-icon">
-                            <i class="fas fa-boxes"></i>
-                        </div>
-                        <div class="metric-content">
-                            <h3>库存状态</h3>
-                            <div class="metric-value" id="inventoryStatus">正常</div>
-                            <div class="metric-unit">状态</div>
-                            <div class="metric-subtitle">
-                                <span class="inventory-detail">
-                                    库存：<span id="inventoryQuantity">0</span>米
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <a href="javascript:void(0)" onclick="showConsultationModal()" class="cta-button">
+                    <i class="fas fa-comments"></i>
+                    免费咨询
+                </a>
             </div>
-        </section>
+        </div>
 
-        <!-- 产量统计面板 -->
-        <section class="production-stats-panel">
-            <div class="stats-container">
-                <div class="stats-card-mini">
-                    <div class="stats-icon daily">
-                        <i class="fas fa-calendar-day"></i>
+    <!-- 服务卡片区域 -->
+    <section class="services">
+            <div class="service-cards">
+                <!-- AI设计方案模块 -->
+                <div class="service-card ai" onclick="window.location.href='ai-design.html'">
+                    <i class="fas fa-robot"></i>
+                    <h2>AI设计</h2>
+                <p>智能化设计方案生成与优化</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">1200+</span>
+                            <span class="stat-label">方案生成</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">85%</span>
+                            <span class="stat-label">降本率</span>
+                        </div>
                     </div>
-                    <div class="stats-content">
-                        <div class="stats-value" id="dailyProduction">0</div>
-                        <div class="stats-label">日产量 (米)</div>
-                    </div>
-                </div>
-
-                <div class="stats-card-mini">
-                    <div class="stats-icon monthly">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div class="stats-content">
-                        <div class="stats-value" id="monthlyProduction">0</div>
-                        <div class="stats-label">月产量 (米)</div>
-                    </div>
-                </div>
-
-                <div class="stats-card-mini">
-                    <div class="stats-icon quarterly">
-                        <i class="fas fa-calendar"></i>
-                    </div>
-                    <div class="stats-content">
-                        <div class="stats-value" id="quarterlyProduction">0</div>
-                        <div class="stats-label">季度产量 (米)</div>
-                    </div>
-                </div>
-
-                <div class="stats-card-mini">
-                    <div class="stats-icon yearly">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="stats-content">
-                        <div class="stats-value" id="yearlyProduction">0</div>
-                        <div class="stats-label">本年产量 (米)</div>
-                    </div>
-                </div>
-
-                <div class="stats-refresh">
-                    <button class="stats-refresh-btn" id="refreshProductionStats" title="刷新产量统计">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
             </div>
-        </section>
 
-        <!-- 图表展示区域 -->
-        <section class="charts-section">
-            <div class="charts-container">
-                <!-- 生产状态分布 -->
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3>生产状态分布</h3>
-                        <div class="chart-actions">
-                            <button class="chart-btn"><i class="fas fa-expand"></i></button>
-                            <button class="chart-btn"><i class="fas fa-download"></i></button>
+                <!-- AI联合设计中心模块 -->
+                <div class="service-card design" onclick="window.location.href='ai-center.html'">
+                    <i class="fas fa-drafting-compass"></i>
+                    <h2>联合设计</h2>
+                    <p>设计院协同创新平台</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">35</span>
+                            <span class="stat-label">合作设计院</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">180</span>
+                            <span class="stat-label">完成项目</span>
                         </div>
                     </div>
-                    <div class="chart-content">
-                        <canvas id="productionChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- 发货状态分布 -->
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3>发货状态分布</h3>
-                        <div class="chart-actions">
-                            <button class="chart-btn"><i class="fas fa-expand"></i></button>
-                            <button class="chart-btn"><i class="fas fa-download"></i></button>
-                        </div>
-                    </div>
-                    <div class="chart-content">
-                        <canvas id="shippingChart"></canvas>
-                    </div>
-                </div>
-                
-                <!-- 规格型号需求分布 -->
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3>规格型号需求分布</h3>
-                        <div class="chart-actions">
-                            <button class="chart-btn" onclick="refreshAllCharts()" title="刷新图表"><i class="fas fa-sync-alt"></i></button>
-                            <button class="chart-btn" onclick="fixChartDisplay()" title="修复显示"><i class="fas fa-tools"></i></button>
-                            <button class="chart-btn" onclick="exportChart(window.charts?.specChart, 'spec-chart')" title="导出图表"><i class="fas fa-download"></i></button>
-                        </div>
-                    </div>
-                    <div class="chart-content">
-                        <canvas id="specChart"></canvas>
-                    </div>
-                </div>
-                
-                <!-- 工地区域需求分布 -->
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3>工地区域需求分布</h3>
-                        <div class="chart-actions">
-                            <button class="chart-btn"><i class="fas fa-expand"></i></button>
-                            <button class="chart-btn"><i class="fas fa-download"></i></button>
-                        </div>
-                    </div>
-                    <div class="chart-content">
-                        <canvas id="areaChart"></canvas>
-                    </div>
-                </div>
             </div>
-        </section>
 
-        <!-- 生产数据管理区域 -->
-        <section class="data-management-section">
-            <div class="management-container">
-                <!-- 操作工具栏 -->
-                <div class="toolbar-card">
-                    <div class="toolbar-header">
-                        <h3>生产数据管理</h3>
-                        <div class="toolbar-actions">
-                            <button class="action-btn success" id="addPlanBtn">
-                                <i class="fas fa-clipboard-list"></i>
-                                新增计划
-                            </button>
-                            <button class="action-btn primary" id="addProductionBtn">
-                                <i class="fas fa-plus"></i>
-                                新增生产
-                            </button>
-                            <button class="action-btn warning" id="batchShippingBtn">
-                                <i class="fas fa-truck"></i>
-                                批量发货
-                            </button>
-                            <button class="action-btn info" id="shippingHistoryBtn">
-                                <i class="fas fa-history"></i>
-                                发货历史
-                            </button>
-                            <button class="action-btn secondary" id="batchEditBtn">
-                                <i class="fas fa-edit"></i>
-                                批量编辑
-                            </button>
-                            <button class="action-btn success" id="exportDataBtn">
-                                <i class="fas fa-download"></i>
-                                导出数据
-                            </button>
-                            <button class="action-btn warning" id="importDataBtn">
-                                <i class="fas fa-upload"></i>
-                                导入JSON
-                            </button>
-                            <button class="action-btn info" id="importExcelBtn">
-                                <i class="fas fa-file-excel"></i>
-                                导入Excel
-                            </button>
-                            <button class="action-btn info" id="viewLogsBtn">
-                                <i class="fas fa-history"></i>
-                                操作日志
-                            </button>
-                            <button class="action-btn danger" id="clearAllDataBtn">
-                                <i class="fas fa-trash-alt"></i>
-                                清空所有数据
-                            </button>
+                <!-- 数智工厂模块 -->
+                <div class="service-card factory" onclick="window.location.href='smart-factory.html'">
+                    <i class="fas fa-industry"></i>
+                    <h2>数智工厂</h2>
+                    <p>工厂产能监控与智能调度</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">25</span>
+                            <span class="stat-label">接入工厂</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">98%</span>
+                            <span class="stat-label">设备利用率</span>
                         </div>
                     </div>
-                </div>
-
-                <!-- 数据表格 -->
-                <div class="data-table-card">
-                    <div class="table-header">
-                        <div class="table-controls">
-                            <div class="search-box">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="searchInput" placeholder="搜索规格型号、区域...">
-                            </div>
-                            <div class="table-filters">
-                                <select id="statusFilter" class="filter-select">
-                                    <option value="">全部状态</option>
-                                    <option value="planned">计划中</option>
-                                    <option value="producing">生产中</option>
-                                    <option value="completed">已完成</option>
-                                    <option value="shipped">已发货</option>
-                                </select>
-                                <select id="areaFilter" class="filter-select">
-                                    <option value="">全部区域</option>
-                                    <option value="C1">C1区域</option>
-                                    <option value="C2">C2区域</option>
-                                    <option value="C3">C3区域</option>
-                                    <option value="E1">E1区域</option>
-                                    <option value="E3">E3区域</option>
-                                    <option value="D6">D6区域</option>
-                                    <option value="A14">A14区域</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="table-container">
-                        <table class="data-table" id="productionTable">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <input type="checkbox" id="selectAll">
-                                    </th>
-                                    <th data-sort="spec">规格型号 <i class="fas fa-sort"></i></th>
-                                    <th data-sort="area">工地区域 <i class="fas fa-sort"></i></th>
-                                    <th data-sort="planned">计划数量 <i class="fas fa-sort"></i></th>
-                                    <th data-sort="produced">已生产 <i class="fas fa-sort"></i></th>
-                                    <th data-sort="remaining">剩余数量 <i class="fas fa-sort"></i></th>
-                                    <th data-sort="status">状态 <i class="fas fa-sort"></i></th>
-                                    <th data-sort="deadline">交付日期 <i class="fas fa-sort"></i></th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody">
-                                <!-- 数据行将通过JavaScript动态生成 -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="table-footer">
-                        <div class="table-info">
-                            <span>共 <span id="totalRecords">0</span> 条记录</span>
-                            <span>已选择 <span id="selectedCount">0</span> 项</span>
-                        </div>
-                        <div class="pagination">
-                            <button class="page-btn" id="prevPage" disabled>
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <span class="page-info">
-                                第 <span id="currentPage">1</span> 页，共 <span id="totalPages">1</span> 页
-                            </span>
-                            <button class="page-btn" id="nextPage" disabled>
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </section>
 
-        <!-- 区域统计和详细信息 -->
-        <section class="area-stats-section">
-            <div class="area-stats-container">
-                <!-- 区域统计卡片 -->
-                <div class="area-stats-header">
-                    <h3>各区域生产统计</h3>
-                    <div class="stats-summary">
-                        <span>共 <span id="totalAreas">0</span> 个区域</span>
-                        <span class="drag-hint">
-                            <i class="fas fa-arrows-alt"></i>
-                            可拖拽排序（排序代表紧急程度）
-                        </span>
-                        <button class="refresh-areas-btn" id="refreshAreasBtn">
-                            <i class="fas fa-sync-alt"></i>
-                            刷新统计
-                        </button>
-                    </div>
-                </div>
-                <div class="area-cards-grid" id="areaCardsContainer">
-                    <!-- 区域卡片将通过JavaScript动态生成 -->
-                </div>
-                
-                <!-- 客户发货量统计 -->
-                <div class="stats-card">
-                    <div class="stats-header">
-                        <h3>客户发货量统计</h3>
-                        <div class="stats-header-actions">
-                            <button class="btn btn-primary btn-sm" id="addCustomerCardBtn">
-                                <i class="fas fa-plus"></i>
-                                新增客户卡片
-                            </button>
-                            <button class="btn btn-outline btn-sm" id="refreshCustomerStats">
-                                <i class="fas fa-sync-alt"></i>
-                                刷新统计
-                            </button>
+                <!-- 工业化建造模块 -->
+                <div class="service-card industrial" onclick="window.location.href='industrial-construction.html'">
+                    <i class="fas fa-industry"></i>
+                    <h2>工业化建造</h2>
+                    <p>智能建造与装配式建筑集成服务</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">30+</span>
+                            <span class="stat-label">合作企业</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">95%</span>
+                            <span class="stat-label">工业化率</span>
                         </div>
                     </div>
-                    <div class="stats-content">
-                        <div id="customerStatsContainer" class="customer-stats-grid">
-                            <!-- 客户发货统计卡片将通过JavaScript动态生成 -->
-                        </div>
-                        <div class="customer-stats-summary" id="customerStatsSummary">
-                            <div class="summary-item">
-                                <span class="summary-label">总发货客户数：</span>
-                                <span class="summary-value" id="totalCustomers">0</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">总发货量：</span>
-                                <span class="summary-value" id="totalShippedMeters">0.0 米</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 未生产规格统计 -->
-                <div class="stats-card">
-                    <div class="stats-header">
-                        <h3>未生产规格统计</h3>
-                        <div class="stats-summary">
-                            <span>显示所有未生产的具体规格</span>
-                            <button class="refresh-stats-btn" id="refreshUnproducedStatsBtn">
-                                <i class="fas fa-sync-alt"></i>
-                                刷新统计
-                            </button>
-                        </div>
-                    </div>
-                    <div class="stats-content">
-                        <div class="unproduced-stats-grid" id="unproducedStatsContainer">
-                            <!-- 未生产规格卡片将通过JavaScript动态生成 -->
-                        </div>
-                        <div class="unproduced-stats-info" id="unproducedStatsInfo">
-                            <p>共 <span id="unproducedSpecCount">0</span> 种规格未完成生产</p>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </section>
+
+                <!-- 产业人才平台模块 -->
+                <div class="service-card talent" onclick="window.location.href='talent-platform.html'">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h2>产业人才平台</h2>
+                    <p>专业人才培养与认证体系</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">3000+</span>
+                            <span class="stat-label">认证学员</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">98%</span>
+                            <span class="stat-label">就业率</span>
+                        </div>
+                    </div>
+            </div>
+
+                <!-- 创新技术模块 -->
+                <div class="service-card tech" onclick="window.location.href='tech-innovation.html'">
+                    <i class="fas fa-lightbulb"></i>
+                    <h2>创新技术</h2>
+                    <p>技术创新成果转化平台</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">128</span>
+                            <span class="stat-label">专利授权</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">56</span>
+                            <span class="stat-label">成果转化</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 专利协作模块 -->
+                <div class="service-card patent" onclick="window.location.href='patent-platform.html'">
+                    <i class="fas fa-gavel"></i>
+                    <h2>专利协作</h2>
+                    <p>专利运营与维权服务</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">15%</span>
+                            <span class="stat-label">收益分成</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">100%</span>
+                            <span class="stat-label">维权胜诉</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 工程保险模块 -->
+                <div class="service-card insurance" onclick="window.location.href='insurance-platform.html'">
+                    <i class="fas fa-shield-alt"></i>
+                    <h2>工程保险</h2>
+                    <p>全周期风险保障服务</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="stat-value">500M</span>
+                            <span class="stat-label">承保额度</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">24h</span>
+                            <span class="stat-label">理赔时效</span>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </section>
     </main>
 
-    <!-- 模态框 -->
-    <!-- 新增计划模态框 -->
-    <div class="modal" id="planModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>新增生产计划</h3>
-                <button class="modal-close" id="closePlanModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="planForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="planTypeInput">型号 *</label>
-                            <select id="planTypeInput" required>
-                                <option value="">请选择型号</option>
-                                <option value="H100">H100</option>
-                                <option value="H80">H80</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="planLengthInput">长度 *</label>
-                            <select id="planLengthInput" required disabled>
-                                <option value="">请先选择型号</option>
-                            </select>
-                        </div>
-                    </div>
+    <footer>
+        <p>© 2024 智建云链. All rights reserved.</p>
+    </footer>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="planSpecDisplay">完整规格</label>
-                            <input type="text" id="planSpecDisplay" readonly placeholder="将根据型号和长度自动生成">
-                        </div>
-                        <div class="form-group">
-                            <label for="planAreaInput">工地区域 *</label>
-                            <select id="planAreaInput" required>
-                                <option value="">请选择工地区域</option>
-                                <option value="C1">C1区域</option>
-                                <option value="C2">C2区域</option>
-                                <option value="C3">C3区域</option>
-                                <option value="E1">E1区域</option>
-                                <option value="E3">E3区域</option>
-                                <option value="D6">D6区域</option>
-                                <option value="A14">A14区域</option>
-                                <option value="__add_new__">+ 新增区域</option>
-                            </select>
-                        </div>
-                    </div>
+    <!-- 添加遮罩层元素 -->
+    <div class="overlay" id="overlay"></div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="planQuantityInput">计划数量 *</label>
-                            <input type="number" id="planQuantityInput" min="1" required placeholder="请输入计划数量">
-                        </div>
-                        <div class="form-group">
-                            <label for="planDeadlineInput">计划交付日期</label>
-                            <input type="date" id="planDeadlineInput">
-                        </div>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="planRemarksInput">计划备注</label>
-                        <textarea id="planRemarksInput" rows="3" placeholder="请输入计划备注信息"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelPlanBtn">取消</button>
-                <button type="submit" class="btn success" id="savePlanBtn" form="planForm">保存计划</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 新增/编辑生产数据模态框 -->
-    <div class="modal" id="productionModal">
-        <div class="modal-content modal-large">
-            <div class="modal-header">
-                <h3 id="modalTitle">新增生产数据</h3>
-                <div class="modal-header-actions">
-                    <button class="modal-close" id="closeModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <!-- 单项编辑模式 -->
-                <div id="singleMode" class="production-mode" style="display: none;">
-                    <form id="productionForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="typeInput">型号 *</label>
-                                <select id="typeInput" required>
-                                    <option value="">请选择型号</option>
-                                    <option value="H80">H80</option>
-                                    <option value="H100">H100</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="lengthInput">长度 *</label>
-                                <select id="lengthInput" disabled required>
-                                    <option value="">请先选择型号</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="specDisplay">完整规格</label>
-                                <input type="text" id="specDisplay" readonly placeholder="自动生成">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="areaInput">工地区域 *</label>
-                                <select id="areaInput" required>
-                                    <option value="">请选择区域</option>
-                                    <option value="C1">C1区域</option>
-                                    <option value="C2">C2区域</option>
-                                    <option value="C3">C3区域</option>
-                                    <option value="E1">E1区域</option>
-                                    <option value="E3">E3区域</option>
-                                    <option value="D6">D6区域</option>
-                                    <option value="A14">A14区域</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="plannedInput">计划数量 (根) *</label>
-                                <input type="number" id="plannedInput" min="1" required placeholder="请输入计划数量">
-                            </div>
-                            <div class="form-group">
-                                <label for="producedInput">已生产数量 (根)</label>
-                                <input type="number" id="producedInput" min="0" placeholder="请输入已生产数量">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="statusInput">状态</label>
-                                <select id="statusInput">
-                                    <option value="planned">计划中</option>
-                                    <option value="producing">生产中</option>
-                                    <option value="completed">已完成</option>
-                                    <option value="shipped">已发货</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="deadlineInput">交期</label>
-                                <input type="date" id="deadlineInput">
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="remarksInput">备注</label>
-                            <textarea id="remarksInput" rows="3" placeholder="请输入备注信息"></textarea>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- 批量添加模式 -->
-                <div id="batchMode" class="production-mode">
-                    <div class="batch-header">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="batchArea">工地区域 <span style="color: #6b7280; font-size: 12px;">(可选，系统可智能分配)</span></label>
-                                <select id="batchArea">
-                                    <option value="">智能分配到紧急区域</option>
-                                    <option value="C1">C1区域</option>
-                                    <option value="C2">C2区域</option>
-                                    <option value="C3">C3区域</option>
-                                    <option value="E1">E1区域</option>
-                                    <option value="E3">E3区域</option>
-                                    <option value="D6">D6区域</option>
-                                    <option value="A14">A14区域</option>
-                                    <option value="__add_new__">+ 新增区域</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="batchProductionDate">生产日期 *</label>
-                                <input type="date" id="batchProductionDate" required>
-                            </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-success" id="addBatchRow">
-                                    <i class="fas fa-plus"></i>
-                                    添加规格
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="batch-table-container">
-                        <table class="batch-table">
-                            <thead>
-                                <tr>
-                                    <th>型号</th>
-                                    <th>长度</th>
-                                    <th>生产根数</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="batchTableBody">
-                                <!-- 批量行将通过JavaScript动态添加 -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="batch-summary">
-                        <div class="summary-item">
-                            <span>总规格数：</span>
-                            <span id="totalSpecs">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>总根数：</span>
-                            <span id="totalQuantity">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>总米数：</span>
-                            <span id="totalMeters">0.0</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelBtn">取消</button>
-                <button type="button" class="btn primary" id="saveBtn">
-                    <span id="saveButtonText">批量保存</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 发货管理模态框 -->
-    <div class="modal" id="shippingModal">
-        <div class="modal-content modal-large">
-            <div class="modal-header">
-                <h3 id="shippingModalTitle">批量发货管理</h3>
-                <div class="modal-header-actions">
-                    <button class="modal-close" id="closeShippingModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-body">
-
-
-                <!-- 批量发货模式 -->
-                <div id="batchShippingMode" class="shipping-mode">
-                    <div class="batch-shipping-header">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="batchShippingDate">发货日期 *</label>
-                                <input type="date" id="batchShippingDate" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="batchCustomerName">客户名称 *</label>
-                                <select id="batchCustomerName" required>
-                                    <option value="">请选择客户</option>
-                                    <option value="南通际铨">南通际铨</option>
-                                    <option value="盐城恒逸明">盐城恒逸明</option>
-                                    <option value="绍兴精工">绍兴精工</option>
-                                    <option value="上海福铁龙">上海福铁龙</option>
-                                    <option value="苏州良浦">苏州良浦</option>
-                                    <option value="南通顶德">南通顶德</option>
-                                    <option value="南通科达">南通科达</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="batchTransportCompany">运输公司</label>
-                                <input type="text" id="batchTransportCompany" placeholder="请输入运输公司">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="batchTrackingNumber">运单号</label>
-                                <input type="text" id="batchTrackingNumber" placeholder="请输入运单号">
-                            </div>
-                            <div class="form-group">
-                                <label for="batchDeliveryAddress">收货地址</label>
-                                <input type="text" id="batchDeliveryAddress" placeholder="请输入收货地址">
-                            </div>
-                        </div>
-
-                        <!-- 搜索功能 -->
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="specSearchInput">搜索规格型号</label>
-                                <input type="text" id="specSearchInput" placeholder="输入规格型号进行搜索，如：H100、1200mm等">
-                            </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-secondary" id="clearSearchBtn">
-                                    <i class="fas fa-times"></i>
-                                    清空搜索
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <button type="button" class="btn btn-info" id="loadAvailableItems">
-                                <i class="fas fa-search"></i>
-                                加载可发货项目
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="batch-shipping-table-container">
-                        <table class="batch-shipping-table">
-                            <thead>
-                                <tr>
-                                    <th>规格型号</th>
-                                    <th>可发货数量</th>
-                                    <th>发货数量</th>
-                                    <th>合计米数</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="batchShippingTableBody">
-                                <!-- 批量发货项目将通过JavaScript动态添加 -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- 发货购物车 -->
-                    <div class="shipping-cart-section">
-                        <div class="shipping-cart-header">
-                            <h4>
-                                <i class="fas fa-shopping-cart"></i>
-                                发货单
-                            </h4>
-                            <button type="button" class="btn btn-sm btn-outline" onclick="dataManager.clearShippingCart()">
-                                <i class="fas fa-trash"></i>
-                                清空发货单
-                            </button>
-                        </div>
-                        <div class="shipping-cart-container" id="shippingCartContainer">
-                            <div class="empty-cart">
-                                <i class="fas fa-shopping-cart"></i>
-                                <p>发货单为空，请选择规格加入发货单</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="batch-shipping-summary">
-                        <div class="summary-item">
-                            <span>发货规格数：</span>
-                            <span id="totalShippingSpecs">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>发货总根数：</span>
-                            <span id="totalShippingQuantity">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>发货总重量：</span>
-                            <span id="totalShippingWeight">0.0 kg</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>发货总米数：</span>
-                            <span id="totalShippingMeters">0.0 m</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="batchShippingRemarks">发货备注</label>
-                        <textarea id="batchShippingRemarks" rows="3" placeholder="请输入发货备注"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelShippingBtn">取消</button>
-                <button type="button" class="btn info" id="previewShippingBtn" style="display: none;">
-                    <i class="fas fa-eye"></i>
-                    预览发货单
-                </button>
-                <button type="button" class="btn success" id="exportShippingBtn" style="display: none;">
-                    <i class="fas fa-download"></i>
-                    导出发货单
-                </button>
-                <button type="button" class="btn primary" id="confirmShippingBtn">
-                    <span id="shippingButtonText">批量发货</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 发货历史模态框 -->
-    <div class="modal large" id="shippingHistoryModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>发货历史管理</h3>
-                <div class="modal-header-actions">
-                    <button type="button" class="btn btn-outline" id="refreshShippingHistoryBtn">
-                        <i class="fas fa-sync-alt"></i>
-                        刷新
-                    </button>
-                    <button class="modal-close" id="closeShippingHistoryModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <!-- 筛选区域 -->
-                <div class="shipping-history-filters">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="historyDateFrom">开始日期：</label>
-                            <input type="date" id="historyDateFrom">
-                        </div>
-                        <div class="form-group">
-                            <label for="historyDateTo">结束日期：</label>
-                            <input type="date" id="historyDateTo">
-                        </div>
-                        <div class="form-group">
-                            <label for="historyCustomer">客户：</label>
-                            <select id="historyCustomer">
-                                <option value="">全部客户</option>
-                                <option value="南通际铨">南通际铨</option>
-                                <option value="盐城恒逸明">盐城恒逸明</option>
-                                <option value="绍兴精工">绍兴精工</option>
-                                <option value="上海福铁龙">上海福铁龙</option>
-                                <option value="苏州良浦">苏州良浦</option>
-                                <option value="南通顶德">南通顶德</option>
-                                <option value="南通科达">南通科达</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <button type="button" class="btn btn-info" id="filterShippingHistoryBtn">
-                                <i class="fas fa-search"></i>
-                                筛选
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 发货记录列表 -->
-                <div class="shipping-history-list" id="shippingHistoryList">
-                    <!-- 发货记录将通过JavaScript动态生成 -->
-                </div>
-
-                <!-- 统计信息 -->
-                <div class="shipping-history-summary">
-                    <div class="summary-item">
-                        <span>发货次数：</span>
-                        <span id="totalShippingRecords">0</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>总发货量：</span>
-                        <span id="totalShippedQuantity">0 根</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>总发货重量：</span>
-                        <span id="totalShippedWeight">0.0 kg</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>总发货米数：</span>
-                        <span id="totalShippedMeters">0.0 m</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelShippingHistoryBtn">关闭</button>
-                <button type="button" class="btn success" id="exportShippingHistoryBtn">
-                    <i class="fas fa-download"></i>
-                    导出历史
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 发货详情编辑模态框 -->
-    <div class="modal large" id="shippingDetailModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="shippingDetailTitle">发货详情</h3>
-                <div class="modal-header-actions">
-                    <button type="button" class="btn btn-outline" id="toggleShippingEditMode">
-                        <i class="fas fa-edit"></i>
-                        <span id="editModeText">编辑</span>
-                    </button>
-                    <button class="modal-close" id="closeShippingDetailModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <!-- 发货基本信息 -->
-                <div class="shipping-detail-info">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="detailShippingDate">发货日期：</label>
-                            <input type="date" id="detailShippingDate" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="detailCustomerName">客户名称：</label>
-                            <input type="text" id="detailCustomerName" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="detailTransportCompany">运输公司：</label>
-                            <input type="text" id="detailTransportCompany" readonly>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="detailTrackingNumber">运单号：</label>
-                            <input type="text" id="detailTrackingNumber" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="detailDeliveryAddress">收货地址：</label>
-                            <input type="text" id="detailDeliveryAddress" readonly>
-                        </div>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="detailShippingRemarks">发货备注：</label>
-                        <textarea id="detailShippingRemarks" rows="2" readonly></textarea>
-                    </div>
-                </div>
-
-                <!-- 发货项目列表 -->
-                <div class="shipping-detail-items">
-                    <div class="section-header">
-                        <h4>发货项目</h4>
-                        <button type="button" class="btn btn-sm btn-success" id="addShippingItemBtn" style="display: none;">
-                            <i class="fas fa-plus"></i>
-                            添加项目
-                        </button>
-                    </div>
-                    <div class="shipping-items-table-container">
-                        <table class="shipping-items-table">
-                            <thead>
-                                <tr>
-                                    <th>规格型号</th>
-                                    <th>发货数量</th>
-                                    <th>重量(kg)</th>
-                                    <th>米数(m)</th>
-                                    <th class="edit-mode-column" style="display: none;">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="shippingDetailItemsBody">
-                                <!-- 发货项目将通过JavaScript动态生成 -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- 发货汇总 -->
-                <div class="shipping-detail-summary">
-                    <div class="summary-item">
-                        <span>规格数量：</span>
-                        <span id="detailTotalSpecs">0</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>总根数：</span>
-                        <span id="detailTotalQuantity">0</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>总重量：</span>
-                        <span id="detailTotalWeight">0.0 kg</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>总米数：</span>
-                        <span id="detailTotalMeters">0.0 m</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelShippingDetailBtn">取消</button>
-                <button type="button" class="btn danger" id="deleteShippingRecordBtn" style="display: none;">
-                    <i class="fas fa-trash"></i>
-                    删除发货记录
-                </button>
-                <button type="button" class="btn primary" id="saveShippingDetailBtn" style="display: none;">
-                    <i class="fas fa-save"></i>
-                    保存修改
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 批量操作模态框 -->
-    <div class="modal" id="batchModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>批量操作</h3>
-                <button class="modal-close" id="closeBatchModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="batch-options">
-                    <div class="batch-option" data-action="updateStatus">
-                        <i class="fas fa-edit"></i>
-                        <span>批量更新状态</span>
-                    </div>
-                    <div class="batch-option" data-action="updateProduction">
-                        <i class="fas fa-plus"></i>
-                        <span>批量增加生产数量</span>
-                    </div>
-                    <div class="batch-option" data-action="batchShipping">
-                        <i class="fas fa-truck"></i>
-                        <span>批量发货</span>
-                    </div>
-                    <div class="batch-option" data-action="delete">
-                        <i class="fas fa-trash"></i>
-                        <span>批量删除</span>
-                    </div>
-                </div>
-
-                <div class="batch-form" id="batchForm" style="display: none;">
-                    <!-- 批量操作表单将根据选择的操作动态生成 -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelBatchBtn">取消</button>
-                <button type="button" class="btn primary" id="executeBatchBtn" style="display: none;">执行操作</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Excel导入模态框 -->
-    <div class="modal" id="excelImportModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Excel数据导入</h3>
-                <button class="modal-close" id="closeExcelImportModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="import-instructions">
-                    <div class="instruction-item">
-                        <i class="fas fa-magic"></i>
-                        <span>系统可自动识别Excel表格中的型号，型号选择为可选项</span>
-                    </div>
-                    <div class="instruction-item">
-                        <i class="fas fa-info-circle"></i>
-                        <span>请选择工地区域，然后选择Excel文件</span>
-                    </div>
-                    <div class="instruction-item">
-                        <i class="fas fa-file-excel"></i>
-                        <span>支持.xlsx和.xls格式文件</span>
-                    </div>
-                    <div class="instruction-item">
-                        <i class="fas fa-plus-circle"></i>
-                        <span>导入的数据将添加到现有数据中，不会覆盖</span>
-                    </div>
-                </div>
-
-                <form id="excelImportForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="importTypeSelect">型号 <span style="color: #6b7280; font-size: 12px;">(可选，系统可自动识别)</span></label>
-                            <select id="importTypeSelect">
-                                <option value="">自动识别型号</option>
-                                <option value="H100">强制使用 H100</option>
-                                <option value="H80">强制使用 H80</option>
-                                <option value="H120">强制使用 H120</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="importAreaSelect">工地区域 *</label>
-                            <select id="importAreaSelect" required>
-                                <option value="">请选择工地区域</option>
-                                <option value="C1">C1区域</option>
-                                <option value="C2">C2区域</option>
-                                <option value="C3">C3区域</option>
-                                <option value="E1">E1区域</option>
-                                <option value="E3">E3区域</option>
-                                <option value="D6">D6区域</option>
-                                <option value="A14">A14区域</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="excelFileInput">选择Excel文件 *</label>
-                        <div class="file-input-container">
-                            <input type="file" id="excelFileInput" accept=".xlsx,.xls" required>
-                            <div class="file-input-info">
-                                <i class="fas fa-upload"></i>
-                                <span>点击选择文件或拖拽文件到此处</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="importRemarks">导入备注</label>
-                        <textarea id="importRemarks" rows="3" placeholder="请输入导入备注信息（可选）"></textarea>
-                    </div>
-                </form>
-
-                <!-- 预览区域 -->
-                <div id="importPreview" style="display: none;">
-                    <h4>数据预览</h4>
-                    <div class="preview-info">
-                        <span>预览前5行数据，共 <span id="previewTotalRows">0</span> 行</span>
-                    </div>
-                    <div class="preview-table-container">
-                        <table class="preview-table">
-                            <thead id="previewTableHead">
-                                <!-- 表头将动态生成 -->
-                            </thead>
-                            <tbody id="previewTableBody">
-                                <!-- 预览数据将动态生成 -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelExcelImportBtn">取消</button>
-                <button type="button" class="btn info" id="quickImportBtn" disabled>
-                    <i class="fas fa-bolt"></i>
-                    快速导入
-                </button>
-                <button type="button" class="btn primary" id="previewExcelBtn" disabled>
-                    <i class="fas fa-eye"></i>
-                    预览数据
-                </button>
-                <button type="button" class="btn success" id="confirmExcelImportBtn" disabled>
-                    <i class="fas fa-upload"></i>
-                    确认导入
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 原材料采购管理模态框 -->
-    <div class="modal" id="materialModal">
-        <div class="modal-content modal-large">
-            <div class="modal-header">
-                <h3 id="materialModalTitle">原材料采购管理</h3>
-                <div class="modal-header-actions">
-                    <button type="button" class="btn btn-outline" id="toggleMaterialMode">
-                        <i class="fas fa-history"></i>
-                        <span id="materialModeText">查看记录</span>
-                    </button>
-                    <button class="modal-close" id="closeMaterialModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <!-- 新增采购模式 -->
-                <div id="addMaterialMode" class="material-mode">
-                    <form id="materialForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="materialDate">采购日期 *</label>
-                                <input type="date" id="materialDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="materialQuantity">采购吨位 *</label>
-                                <input type="number" id="materialQuantity" min="0.1" step="0.1" required placeholder="请输入采购吨位">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="materialDiameter">钢筋直径 *</label>
-                                <select id="materialDiameter" required>
-                                    <option value="">请选择直径</option>
-                                    <option value="4mm">4mm</option>
-                                    <option value="5mm">5mm</option>
-                                    <option value="6mm">6mm</option>
-                                    <option value="8mm">8mm</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="materialSupplier">供应厂家 *</label>
-                                <select id="materialSupplier" required>
-                                    <option value="">请选择厂家</option>
-                                    <option value="鸿穗">鸿穗</option>
-                                    <option value="昊达鑫">昊达鑫</option>
-                                    <option value="河北晟科">河北晟科</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="materialPrice">单价（元/吨）</label>
-                                <input type="number" id="materialPrice" min="0" step="0.01" placeholder="请输入单价">
-                            </div>
-                            <div class="form-group">
-                                <label for="materialBatch">批次号</label>
-                                <input type="text" id="materialBatch" placeholder="请输入批次号">
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="materialRemarks">备注</label>
-                            <textarea id="materialRemarks" rows="3" placeholder="请输入备注信息"></textarea>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- 历史记录模式 -->
-                <div id="materialHistoryMode" class="material-mode" style="display: none;">
-                    <div class="material-history-header">
-                        <div class="history-filters">
-                            <div class="form-group">
-                                <label for="historyDateFrom">开始日期：</label>
-                                <input type="date" id="historyDateFrom">
-                            </div>
-                            <div class="form-group">
-                                <label for="historyDateTo">结束日期：</label>
-                                <input type="date" id="historyDateTo">
-                            </div>
-                            <div class="form-group">
-                                <label for="historySupplier">厂家：</label>
-                                <select id="historySupplier">
-                                    <option value="">全部厂家</option>
-                                    <option value="鸿穗">鸿穗</option>
-                                    <option value="昊达鑫">昊达鑫</option>
-                                    <option value="河北晟科">河北晟科</option>
-                                </select>
-                            </div>
-                            <button type="button" class="btn btn-info" id="filterMaterialHistory">
-                                <i class="fas fa-search"></i>
-                                筛选
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="material-history-table-container">
-                        <table class="material-history-table">
-                            <thead>
-                                <tr>
-                                    <th>采购日期</th>
-                                    <th>直径</th>
-                                    <th>厂家</th>
-                                    <th>采购吨位</th>
-                                    <th>单价（元/吨）</th>
-                                    <th>总金额（元）</th>
-                                    <th>批次号</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="materialHistoryTableBody">
-                                <!-- 历史记录将通过JavaScript动态添加 -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="material-summary">
-                        <div class="summary-item">
-                            <span>总采购次数：</span>
-                            <span id="totalPurchases">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>总采购吨位：</span>
-                            <span id="totalPurchasedTons">0.0 吨</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>总采购金额：</span>
-                            <span id="totalPurchaseAmount">0.00 元</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>平均单价：</span>
-                            <span id="averagePrice">0.00 元/吨</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelMaterialBtn">取消</button>
-                <button type="button" class="btn success" id="exportMaterialBtn" style="display: none;">
-                    <i class="fas fa-download"></i>
-                    导出记录
-                </button>
-                <button type="submit" class="btn primary" id="saveMaterialBtn" form="materialForm">
-                    <span id="materialButtonText">保存采购</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 操作日志模态框 -->
-    <div class="modal large" id="logsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>操作日志</h3>
-                <button class="modal-close" id="closeLogsModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="logs-controls">
-                    <div class="logs-filters">
-                        <select id="logTypeFilter" class="filter-select">
-                            <option value="">全部操作</option>
-                            <option value="create">新增</option>
-                            <option value="update">更新</option>
-                            <option value="delete">删除</option>
-                            <option value="shipping">发货</option>
-                            <option value="batch">批量操作</option>
-                        </select>
-                        <input type="date" id="logDateFilter" class="filter-select">
-                        <button class="btn secondary" id="clearLogsBtn">清空日志</button>
-                        <button class="btn primary" id="exportLogsBtn">导出日志</button>
-                    </div>
-                </div>
-
-                <div class="logs-container">
-                    <div class="logs-list" id="logsList">
-                        <!-- 日志条目将通过JavaScript动态生成 -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 云端同步配置模态框 -->
-    <div class="modal" id="cloudSyncModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Firebase 实时同步状态</h3>
-                <button class="modal-close" id="closeCloudSyncModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="sync-status-card">
-                    <div class="sync-status-header">
-                        <h4>同步状态</h4>
-                        <div class="sync-indicator" id="syncIndicator">
-                            <span class="status-dot" id="syncStatusDot"></span>
-                            <span id="syncStatusText">检查中</span>
-                        </div>
-                    </div>
-                    <div class="sync-info" id="syncInfo">
-                        <p>🔄 正在检查云端同步状态...</p>
-                    </div>
-                </div>
-
-                <div class="firebase-info-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 1px solid #93c5fd; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                    <h4 style="color: #1e40af; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-rocket"></i>
-                        Firebase 实时同步
-                    </h4>
-                    <div style="color: #1e40af; font-size: 14px; line-height: 1.6;">
-                        <p style="margin: 0 0 8px 0;">✅ <strong>多用户协作</strong>：支持多人同时操作，数据实时同步</p>
-                        <p style="margin: 0 0 8px 0;">📱 <strong>跨设备同步</strong>：手机、电脑、平板数据自动同步</p>
-                        <p style="margin: 0 0 8px 0;">⚡ <strong>实时更新</strong>：数据变更立即推送到所有设备</p>
-                        <p style="margin: 0 0 8px 0;">🔒 <strong>数据安全</strong>：云端备份，永不丢失</p>
-                        <p style="margin: 0; font-weight: 500;">🌐 <strong>在线访问</strong>：随时随地访问最新数据</p>
-                    </div>
-                </div>
-
-                <div class="sync-help-card" style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px;">
-                    <h5 style="color: #374151; margin: 0 0 8px 0;">💡 使用说明</h5>
-                    <ul style="color: #6b7280; font-size: 13px; margin: 0 0 12px 0; padding-left: 16px; line-height: 1.5;">
-                        <li>系统已自动配置Firebase实时同步</li>
-                        <li>如果状态显示"已连接"，表示同步正常工作</li>
-                        <li>如果显示"未连接"，请检查网络连接</li>
-                        <li>所有数据变更会自动保存到云端</li>
-                    </ul>
-
-                    <div style="margin-top: 12px;">
-                        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                            <button type="button" class="btn info" id="refreshFirebaseStatusBtn" style="font-size: 12px; padding: 6px 12px;">
-                                <i class="fas fa-refresh"></i> 刷新状态
-                            </button>
-                            <button type="button" class="btn secondary" id="testFirebaseConnectionBtn" style="font-size: 12px; padding: 6px 12px;">
-                                <i class="fas fa-vial"></i> 测试连接
-                            </button>
-                            <button type="button" class="btn primary" id="manualSyncBtn" style="font-size: 12px; padding: 6px 12px;">
-                                <i class="fas fa-sync-alt"></i> 手动同步
-                            </button>
-                            <button type="button" class="btn danger" onclick="clearFirebaseData()" style="font-size: 12px; padding: 6px 12px; background: #dc3545; color: white; margin-left: 5px;">
-                                <i class="fas fa-trash-alt"></i> 清除云数据
-                            </button>
-                            <button type="button" class="btn secondary" onclick="debugDataStatus()" style="font-size: 12px; padding: 6px 12px; background: #6c757d;">
-                                <i class="fas fa-bug"></i> 调试数据
-                            </button>
-                            <button type="button" class="btn secondary" onclick="testFirebaseWrite()" style="font-size: 12px; padding: 6px 12px; background: #28a745;">
-                                <i class="fas fa-vial"></i> 测试写入
-                            </button>
-                            <button type="button" class="btn secondary" onclick="testSyncLogic()" style="font-size: 12px; padding: 6px 12px; background: #ffc107; color: #212529;">
-                                <i class="fas fa-sync-alt"></i> 测试同步
-                            </button>
-                        </div>
-
-                        <div style="padding: 8px; background: #f3f4f6; border-radius: 4px; font-size: 11px; color: #6b7280;">
-                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                                <input type="checkbox" id="disableFirebaseCheckbox" style="margin: 0;">
-                                <span>禁用Firebase，只使用本地存储（如果连接有问题可勾选此项）</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelCloudSyncBtn">关闭</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 生产数据管理模态框 -->
-    <div class="modal" id="productionManagementModal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3>生产数据管理</h3>
-                <div class="modal-header-actions">
-                    <button class="btn btn-outline" id="refreshProductionDataBtn">
-                        <i class="fas fa-sync-alt"></i>
-                        刷新数据
-                    </button>
-                    <button class="modal-close" id="closeProductionManagementModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <!-- 统计信息 -->
-                <div class="production-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">总生产记录</span>
-                        <span class="stat-value" id="totalProductionRecords">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">已生产总量</span>
-                        <span class="stat-value" id="totalProducedQuantity">0 根</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">涉及规格</span>
-                        <span class="stat-value" id="totalProductionSpecs">0 种</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">分型号统计</span>
-                        <span class="stat-value" id="totalProductionAreas">暂无数据</span>
-                    </div>
-                </div>
-
-                <!-- 筛选和操作工具栏 -->
-                <div class="production-toolbar">
-                    <div class="toolbar-filters">
-                        <select id="productionSpecFilter">
-                            <option value="">全部规格</option>
-                        </select>
-                        <select id="productionAreaFilter">
-                            <option value="">全部区域</option>
-                        </select>
-                        <input type="text" id="productionSearchInput" placeholder="搜索生产记录...">
-                    </div>
-                    <div class="toolbar-actions">
-                        <button class="btn btn-danger" id="batchDeleteProductionBtn" disabled>
-                            <i class="fas fa-trash-alt"></i>
-                            批量删除
-                        </button>
-                        <button class="btn btn-warning" id="batchEditProductionBtn" disabled>
-                            <i class="fas fa-edit"></i>
-                            批量修改
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 生产数据表格 -->
-                <div class="production-table-container">
-                    <table class="production-table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <input type="checkbox" id="selectAllProduction">
-                                </th>
-                                <th>规格型号</th>
-                                <th>工地区域</th>
-                                <th>生产数量</th>
-                                <th>生产日期</th>
-                                <th>生产备注</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productionTableBody">
-                            <!-- 生产数据将动态生成 -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- 分页控制 -->
-                <div class="production-pagination">
-                    <button class="btn btn-outline" id="prevProductionPage" disabled>
-                        <i class="fas fa-chevron-left"></i>
-                        上一页
-                    </button>
-                    <span class="pagination-info">
-                        第 <span id="currentProductionPage">1</span> 页，共 <span id="totalProductionPages">1</span> 页
-                    </span>
-                    <button class="btn btn-outline" id="nextProductionPage" disabled>
-                        下一页
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelProductionManagementBtn">关闭</button>
-                <button type="button" class="btn primary" id="exportProductionDataBtn">
-                    <i class="fas fa-download"></i>
-                    导出生产数据
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 生产记录编辑模态框 -->
-    <div class="modal" id="editProductionRecordModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="editProductionRecordTitle">编辑生产记录</h3>
-                <button class="modal-close" id="closeEditProductionRecordModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editProductionRecordForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="editProductionSpec">规格型号 *</label>
-                            <input type="text" id="editProductionSpec" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="editProductionArea">工地区域 *</label>
-                            <input type="text" id="editProductionArea" readonly>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="editProductionQuantity">生产数量 *</label>
-                            <input type="number" id="editProductionQuantity" min="1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editProductionDate">生产日期 *</label>
-                            <input type="date" id="editProductionDate" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="editProductionRemarks">生产备注</label>
-                        <textarea id="editProductionRemarks" rows="3" placeholder="请输入生产备注"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelEditProductionRecordBtn">取消</button>
-                <button type="submit" class="btn primary" form="editProductionRecordForm">
-                    <i class="fas fa-save"></i>
-                    保存修改
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 新增客户卡片模态框 -->
-    <div class="modal" id="addCustomerCardModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>新增客户卡片</h3>
-                <button class="modal-close" id="closeAddCustomerCardModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="customer-selection-section">
-                    <h4>选择客户</h4>
-                    <p class="section-description">从现有客户中选择要添加统计卡片的客户</p>
-
-                    <div class="customer-search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="customerSearchInput" placeholder="搜索客户名称...">
-                    </div>
-
-                    <div class="customer-list" id="customerSelectionList">
-                        <!-- 客户选择列表将通过JavaScript动态生成 -->
-                    </div>
-                </div>
-
-                <div class="selected-customer-section" id="selectedCustomerSection" style="display: none;">
-                    <h4>已选择客户</h4>
-                    <div class="selected-customer-info" id="selectedCustomerInfo">
-                        <!-- 选中的客户信息 -->
-                    </div>
-
-                    <div class="customer-actions">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="createShippingPlanCheckbox">
-                            <span>同时创建批次发货需求</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn secondary" id="cancelAddCustomerCard">取消</button>
-                <button type="button" class="btn primary" id="confirmAddCustomerCard" disabled>确认添加</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 遮罩层 -->
-    <div class="modal-overlay" id="modalOverlay"></div>
-
-    <!-- Firebase SDK v9+ -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import {
-            getFirestore,
-            connectFirestoreEmulator,
-            collection,
-            doc,
-            getDoc,
-            getDocs,
-            setDoc,
-            deleteDoc,
-            query,
-            where,
-            orderBy,
-            limit,
-            onSnapshot,
-            writeBatch,
-            serverTimestamp,
-            enablePersistentCacheIndexAutoCreation
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import {
-            getAuth,
-            connectAuthEmulator,
-            signInAnonymously
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDAtk4_l58OAfAQYh0aGeykavDYfnflbKc",
-            authDomain: "zhlscglxt.firebaseapp.com",
-            projectId: "zhlscglxt",
-            storageBucket: "zhlscglxt.firebasestorage.app",
-            messagingSenderId: "364959896544",
-            appId: "1:364959896544:web:3ad7266c9832ff25569185"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // Make Firebase available globally
-        window.firebaseApp = app;
-        window.firebaseDB = db;
-        window.firebaseAuth = auth;
-        window.firebaseConfig = firebaseConfig;
-
-        // Export Firebase functions globally for sync manager
-        window.collection = collection;
-        window.doc = doc;
-        window.getDoc = getDoc;
-        window.getDocs = getDocs;
-        window.setDoc = setDoc;
-        window.deleteDoc = deleteDoc;
-        window.query = query;
-        window.where = where;
-        window.orderBy = orderBy;
-        window.limit = limit;
-        window.onSnapshot = onSnapshot;
-        window.writeBatch = writeBatch;
-        window.serverTimestamp = serverTimestamp;
-        window.signInAnonymously = signInAnonymously;
-        window.enablePersistentCacheIndexAutoCreation = enablePersistentCacheIndexAutoCreation;
-
-        console.log('✅ Firebase v10 SDK 已加载，所有函数已导出到全局作用域');
-    </script>
-
-    <!-- Firebase 实时同步 -->
-    <script src="scripts/firebase-sync.js?v=20241221-4"></script>
-
-    <!-- JavaScript -->
-    <script src="scripts/performance.js"></script>
-    <script src="scripts/data-management.js?v=20241221-4"></script>
-    <script src="scripts/main.js"></script>
-    <script src="scripts/charts.js"></script>
-
-    <!-- 系统诊断脚本 -->
-    <script src="system-diagnostic.js"></script>
-
-    <!-- Firebase初始化脚本 -->
     <script>
-        // Firebase初始化
-        window.addEventListener('load', async function() {
-            console.log('=== 开始初始化Firebase ===');
-
-            // 等待Firebase同步管理器加载
-            let retries = 0;
-            while (!window.firebaseSync && retries < 50) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-                retries++;
-            }
-
-            console.log('Firebase同步管理器检查:', {
-                firebaseSync: !!window.firebaseSync,
-                firebaseConfig: !!window.firebaseConfig,
-                firebaseDB: !!window.firebaseDB,
-                firebaseAuth: !!window.firebaseAuth
-            });
-
-            // 检查用户是否禁用了Firebase
-            const userDisabledFirebase = localStorage.getItem('disableFirebase') === 'true';
-
-            if (userDisabledFirebase) {
-                console.log('⚠️ 用户已禁用Firebase，跳过初始化');
-                updateConnectionStatus('本地模式', 'warning');
-            } else if (window.firebaseSync && window.firebaseConfig) {
-                try {
-                    console.log('🚀 开始初始化Firebase同步...');
-                    updateConnectionStatus('连接中...', 'info');
-
-                    const success = await window.firebaseSync.initialize(window.firebaseConfig);
-
-                    if (success) {
-                        console.log('✅ Firebase初始化成功');
-                        updateConnectionStatus('已连接', 'success');
-                    } else {
-                        console.log('⚠️ Firebase初始化失败，将使用本地存储模式');
-                        updateConnectionStatus('本地模式', 'warning');
-                    }
-                } catch (error) {
-                    console.error('❌ Firebase初始化异常:', error);
-                    updateConnectionStatus('连接失败', 'error');
-                }
-            } else {
-                console.log('⚠️ Firebase模块或配置未找到，跳过初始化');
-                console.log('调试信息:', {
-                    firebaseSync: window.firebaseSync,
-                    firebaseConfig: window.firebaseConfig,
-                    scripts: Array.from(document.scripts).map(s => s.src || s.innerHTML.substring(0, 50))
-                });
-                updateConnectionStatus('模块未加载', 'error');
-            }
-        });
-
-        // 更新连接状态显示
-        function updateConnectionStatus(status, type) {
-            console.log('更新连接状态:', status, type);
-
-            // 更新头部连接状态
-            const statusElement = document.querySelector('.connection-status');
-            if (statusElement) {
-                statusElement.textContent = status;
-                statusElement.className = `connection-status ${type}`;
-                console.log('头部状态已更新');
-            } else {
-                console.warn('未找到连接状态元素');
-            }
-
-            // 更新同步状态弹窗
-            const syncStatusText = document.getElementById('syncStatusText');
-            const syncStatusDot = document.getElementById('syncStatusDot');
-            const syncIndicator = document.getElementById('syncIndicator');
-
-            if (syncStatusText) {
-                syncStatusText.textContent = status;
-                console.log('同步状态文本已更新');
-            }
-
-            if (syncStatusDot && syncIndicator) {
-                // 移除所有状态类
-                syncStatusDot.className = 'status-dot';
-                syncIndicator.className = 'sync-indicator';
-
-                // 添加新的状态类
-                if (type === 'success') {
-                    syncStatusDot.classList.add('connected');
-                    syncIndicator.classList.add('connected');
-                } else if (type === 'warning') {
-                    syncStatusDot.classList.add('warning');
-                    syncIndicator.classList.add('warning');
-                } else if (type === 'error') {
-                    syncStatusDot.classList.add('error');
-                    syncIndicator.classList.add('error');
-                } else {
-                    syncStatusDot.classList.add('checking');
-                    syncIndicator.classList.add('checking');
-                }
-                console.log('同步状态指示器已更新');
-            }
-        }
-    </script>
-
-    <!-- 数据恢复脚本 -->
-    <script>
-        // 页面加载后的额外检查和修复
-        window.addEventListener('load', function() {
-            console.log('=== 页面完全加载后的数据检查 ===');
-
-            // 延迟检查，确保所有脚本都已加载
-            setTimeout(function() {
-                console.log('window.dataManager 存在:', !!window.dataManager);
-
-                if (!window.dataManager && typeof DataManager !== 'undefined') {
-                    console.log('🔧 执行最终修复...');
-                    try {
-                        window.dataManager = new DataManager();
-                        console.log('✅ 最终修复成功！');
-
-                        // 检查数据
-                        const localData = localStorage.getItem('productionData');
-                        if (localData) {
-                            const data = JSON.parse(localData);
-                            console.log('✅ 找到历史数据:', data.length, '条');
-
-                            // 确保数据加载
-                            if (window.dataManager.data.length === 0) {
-                                window.dataManager.loadFromLocalStorage();
-                                console.log('重新加载后数据条数:', window.dataManager.data.length);
-                            }
-
-                            // 更新界面
-                            setTimeout(() => {
-                                window.dataManager.renderTable();
-                                window.dataManager.updateStats();
-                                window.dataManager.renderAreaStats();
-                                window.dataManager.renderUnproducedStats();
-                                console.log('✅ 界面更新完成');
-
-                                // 显示成功消息
-                                const successMsg = document.createElement('div');
-                                successMsg.style.cssText = `
-                                    position: fixed;
-                                    top: 20px;
-                                    right: 20px;
-                                    background: #10b981;
-                                    color: white;
-                                    padding: 15px 20px;
-                                    border-radius: 8px;
-                                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                                    z-index: 10000;
-                                    font-weight: bold;
-                                `;
-                                successMsg.innerHTML = `🎉 数据恢复成功！找到 ${data.length} 条历史记录`;
-                                document.body.appendChild(successMsg);
-
-                                setTimeout(() => {
-                                    successMsg.remove();
-                                }, 5000);
-                            }, 500);
-                        }
-                    } catch (error) {
-                        console.error('❌ 最终修复失败:', error);
-                    }
-                }
-            }, 1000);
-        });
-
-        // 调试数据状态
-        function debugDataStatus() {
-            console.log('🔍 ===== 数据状态调试 =====');
-
-            // 检查DataManager
-            if (window.dataManager) {
-                console.log('✅ DataManager已加载');
-                console.log('📊 本地数据状态:', {
-                    生产数据: window.dataManager.data?.length || 0,
-                    发货历史: window.dataManager.shippingHistory?.length || 0,
-                    原材料采购: window.dataManager.materialPurchases?.length || 0,
-                    操作日志: window.dataManager.operationLogs?.length || 0,
-                    自定义区域: window.dataManager.customAreas?.size || 0
-                });
-
-                // 显示前几条生产数据
-                if (window.dataManager.data && window.dataManager.data.length > 0) {
-                    console.log('📄 前3条生产数据:', window.dataManager.data.slice(0, 3));
-                }
-            } else {
-                console.log('❌ DataManager未加载');
-            }
-
-            // 检查Firebase
-            if (window.firebaseSync) {
-                console.log('✅ FirebaseSync已加载');
-                console.log('🔗 Firebase状态:', {
-                    已初始化: window.firebaseSync.isInitialized,
-                    已连接: window.firebaseSync.isConnected(),
-                    用户配置: window.firebaseSync.userConfig
-                });
-            } else {
-                console.log('❌ FirebaseSync未加载');
-            }
-
-            // 检查localStorage
-            const localData = localStorage.getItem('productionData');
-            const localShipping = localStorage.getItem('shippingHistory');
-            const localMaterials = localStorage.getItem('materialPurchases');
-
-            console.log('💾 localStorage状态:', {
-                生产数据: localData ? JSON.parse(localData).length : 0,
-                发货历史: localShipping ? JSON.parse(localShipping).length : 0,
-                原材料: localMaterials ? JSON.parse(localMaterials).length : 0
-            });
-
-            console.log('🔍 ===== 调试完成 =====');
-
-            // 显示通知
-            if (window.dataManager) {
-                window.dataManager.showNotification('调试信息已输出到控制台，请按F12查看', 'info');
-            }
-        }
-
-        // 测试Firebase写入
-        async function testFirebaseWrite() {
-            console.log('🧪 开始测试Firebase写入...');
-
-            // 检查Firebase状态
-            console.log('🔍 Firebase状态检查:');
-            console.log('- firebaseSync存在:', !!window.firebaseSync);
-            console.log('- 已初始化:', window.firebaseSync?.isInitialized);
-            console.log('- 已连接:', window.firebaseSync?.isConnected());
-            console.log('- 当前用户:', window.firebaseSync?.currentUser?.uid);
-
-            if (!window.firebaseSync) {
-                console.log('❌ FirebaseSync未加载');
-                return;
-            }
-
-            if (!window.firebaseSync.isConnected()) {
-                console.log('❌ Firebase未连接，尝试重新初始化...');
-
-                // 尝试重新初始化
-                try {
-                    await window.firebaseSync.initialize();
-                    console.log('✅ Firebase重新初始化成功');
-                } catch (initError) {
-                    console.error('❌ Firebase重新初始化失败:', initError);
-                    if (window.dataManager) {
-                        window.dataManager.showNotification('❌ Firebase未连接，无法测试', 'error');
-                    }
-                    return;
-                }
-            }
-
-            try {
-                // 使用最简单的方式测试写入
-                console.log('📝 开始简单写入测试...');
-
-                if (!window.collection || !window.doc || !window.setDoc) {
-                    console.error('❌ Firebase函数未加载');
-                    return;
-                }
-
-                const testData = {
-                    message: '简单测试',
-                    timestamp: Date.now(),
-                    testId: Math.random().toString(36).substr(2, 9)
+        // 确保页面完全加载后再执行
+        window.onload = function() {
+            if (typeof THREE === 'undefined') {
+                console.error('Three.js未加载');
+                // 尝试手动加载
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js';
+                script.onload = function() {
+                    console.log('Three.js已手动加载');
+                    initThreeJS();
+                    initParticles();
                 };
-
-                console.log('📝 测试数据:', testData);
-
-                const docRef = window.doc(window.collection(window.firebaseSync.db, 'test'), 'simple_test_' + Date.now());
-                await window.setDoc(docRef, testData);
-
-                console.log('✅ 简单写入测试成功！');
-                if (window.dataManager) {
-                    window.dataManager.showNotification('✅ Firebase写入测试成功！', 'success');
-                }
-
-                // 现在测试复杂的同步
-                console.log('📝 开始复杂同步测试...');
-                const complexData = [{
-                    id: 'test_' + Date.now(),
-                    specification: 'H80-6000',
-                    quantity: 100,
-                    area: '测试区域',
-                    timestamp: Date.now(),
-                    testFlag: true
-                }];
-
-                const success = await window.firebaseSync.syncToCloud('productionData', complexData, 'update');
-
-                if (success) {
-                    console.log('✅ 复杂同步测试成功！');
-                    if (window.dataManager) {
-                        window.dataManager.showNotification('✅ 完整同步测试成功！', 'success');
-                    }
-                } else {
-                    console.log('❌ 复杂同步测试失败');
-                    if (window.dataManager) {
-                        window.dataManager.showNotification('⚠️ 简单写入成功，但复杂同步失败', 'warning');
-                    }
-                }
-
-            } catch (error) {
-                console.error('❌ Firebase写入测试出错:', error);
-                console.error('错误详情:', {
-                    name: error.name,
-                    message: error.message,
-                    code: error.code,
-                    stack: error.stack
-                });
-                if (window.dataManager) {
-                    window.dataManager.showNotification('❌ Firebase写入测试出错: ' + error.message, 'error');
-                }
-            }
-        }
-
-        // 测试同步逻辑
-        async function testSyncLogic() {
-            console.log('🧪 开始测试同步逻辑...');
-
-            if (!window.dataManager) {
-                console.error('❌ DataManager未加载');
-                return;
-            }
-
-            try {
-                // 1. 创建测试数据
-                console.log('📝 创建测试数据...');
-                const testData = [
-                    {
-                        id: 'sync_test_1',
-                        spec: 'H80-6000',
-                        area: '同步测试区域',
-                        planned: 100,
-                        produced: 50,
-                        shipped: 0,
-                        status: '进行中',
-                        remarks: '本地数据',
-                        timestamp: Date.now() - 10000,
-                        lastModified: Date.now() - 10000,
-                        version: 1,
-                        lastModifiedBy: 'user1',
-                        lastModifiedByName: '用户1'
-                    }
-                ];
-
-                const remoteData = [
-                    {
-                        id: 'sync_test_1',
-                        spec: 'H80-6000',
-                        area: '同步测试区域',
-                        planned: 100,
-                        produced: 75, // 不同的生产数量
-                        shipped: 10,  // 不同的发货数量
-                        status: '已完成', // 不同的状态
-                        remarks: '远程数据',
-                        timestamp: Date.now(),
-                        lastModified: Date.now(),
-                        version: 2, // 更高的版本号
-                        lastModifiedBy: 'user2',
-                        lastModifiedByName: '用户2'
-                    }
-                ];
-
-                // 2. 测试合并逻辑
-                console.log('🔄 测试数据合并...');
-                console.log('本地数据:', testData[0]);
-                console.log('远程数据:', remoteData[0]);
-
-                const mergedResult = window.dataManager.mergeDataWithRemote(testData, remoteData);
-                console.log('合并结果:', mergedResult[0]);
-
-                // 3. 验证合并结果
-                const merged = mergedResult[0];
-                const tests = [
-                    {
-                        name: '版本号应该递增',
-                        pass: merged.version > Math.max(testData[0].version, remoteData[0].version),
-                        expected: '> 2',
-                        actual: merged.version
-                    },
-                    {
-                        name: '生产数量应该取较大值',
-                        pass: merged.produced === Math.max(testData[0].produced, remoteData[0].produced),
-                        expected: 75,
-                        actual: merged.produced
-                    },
-                    {
-                        name: '发货数量应该取较大值',
-                        pass: merged.shipped === Math.max(testData[0].shipped, remoteData[0].shipped),
-                        expected: 10,
-                        actual: merged.shipped
-                    },
-                    {
-                        name: '状态应该优先选择更高级的',
-                        pass: merged.status === '已完成',
-                        expected: '已完成',
-                        actual: merged.status
-                    },
-                    {
-                        name: '备注应该包含合并信息',
-                        pass: merged.remarks.includes('远程更新'),
-                        expected: '包含"远程更新"',
-                        actual: merged.remarks
-                    }
-                ];
-
-                // 4. 显示测试结果
-                console.log('\n📊 测试结果:');
-                let passCount = 0;
-                tests.forEach((test, index) => {
-                    const status = test.pass ? '✅' : '❌';
-                    console.log(`${index + 1}. ${status} ${test.name}`);
-                    console.log(`   期望: ${test.expected}, 实际: ${test.actual}`);
-                    if (test.pass) passCount++;
-                });
-
-                const successRate = (passCount / tests.length * 100).toFixed(1);
-                console.log(`\n🎯 测试通过率: ${passCount}/${tests.length} (${successRate}%)`);
-
-                // 5. 显示通知
-                if (passCount === tests.length) {
-                    window.dataManager.showNotification('✅ 同步逻辑测试全部通过！', 'success');
-                } else {
-                    window.dataManager.showNotification(`⚠️ 同步逻辑测试: ${passCount}/${tests.length} 通过`, 'warning');
-                }
-
-                // 6. 清理测试数据
-                console.log('🧹 清理测试数据...');
-                window.dataManager.data = window.dataManager.data.filter(item =>
-                    !item.id.toString().startsWith('sync_test_')
-                );
-
-            } catch (error) {
-                console.error('❌ 同步逻辑测试失败:', error);
-                window.dataManager.showNotification('❌ 同步逻辑测试失败: ' + error.message, 'error');
-            }
-        }
-
-
-
-        // Firebase控制功能（隐藏，通过控制台调用）
-        window.toggleFirebase = function() {
-            const isDisabled = localStorage.getItem('disableFirebase') === 'true';
-
-            if (isDisabled) {
-                localStorage.removeItem('disableFirebase');
-                updateConnectionStatus('重新连接中...', 'info');
-                if (window.firebaseSync && window.firebaseConfig) {
-                    window.firebaseSync.initialize(window.firebaseConfig);
-                }
-                alert('✅ 云端同步已启用，页面将重新加载');
-                setTimeout(() => location.reload(), 1000);
+                document.head.appendChild(script);
             } else {
-                localStorage.setItem('disableFirebase', 'true');
-                if (window.firebaseSync) {
-                    window.firebaseSync.disconnect();
-                }
-                updateConnectionStatus('本地模式', 'warning');
-                alert('✅ 云端同步已禁用，现在可以安全地导入数据');
+                console.log('Three.js已加载');
+                initThreeJS();
+                initParticles();
             }
         };
-
-        // 清空云端数据功能（隐藏，通过控制台调用）
-        window.clearCloudData = async function() {
-            if (!window.firebaseSync || !window.firebaseSync.isInitialized) {
-                alert('❌ Firebase未连接，无法清空云端数据');
-                return;
-            }
-
-            const confirmed = confirm('⚠️ 确定要清空云端所有数据吗？\n\n这将删除：\n- 所有生产数据\n- 所有发货历史\n- 所有原材料记录\n\n此操作不可恢复！');
-
-            if (!confirmed) return;
-
+        
+        // 初始化Three.js
+        function initThreeJS() {
+            console.log('初始化Three.js');
             try {
-                console.log('🗑️ 开始清空云端数据...');
-                await window.firebaseSync.clearCollection('productionData');
-                await window.firebaseSync.clearCollection('shippingHistory');
-                await window.firebaseSync.clearCollection('materialPurchases');
-                alert('✅ 云端数据已全部清空！');
+                // 检查Three.js是否加载
+                if (typeof THREE === 'undefined') {
+                    console.error('Three.js未加载');
+                    return;
+                }
+                
+                const bannerElement = document.querySelector('.banner');
+                if (!bannerElement) {
+                    console.error('找不到Banner元素');
+                    return;
+                }
+                
+                // 创建场景
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, bannerElement.offsetWidth / bannerElement.offsetHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                
+                // 设置渲染器
+                renderer.setSize(bannerElement.offsetWidth, bannerElement.offsetHeight);
+                renderer.setClearColor(0x000000, 0);
+                
+                // 添加到DOM
+                renderer.domElement.style.position = 'absolute';
+                renderer.domElement.style.top = '0';
+                renderer.domElement.style.left = '0';
+                renderer.domElement.style.width = '100%';
+                renderer.domElement.style.height = '100%';
+                renderer.domElement.style.zIndex = '1';
+                renderer.domElement.style.pointerEvents = 'none';
+                bannerElement.appendChild(renderer.domElement);
+                
+                // 创建简化的齿轮模型
+                const geometry = new THREE.CylinderGeometry(5, 5, 2, 12, 1);
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0x2A5CAA,
+                    transparent: true,
+                    opacity: 0.5,
+                    wireframe: true
+                });
+                
+                const gear = new THREE.Mesh(geometry, material);
+                scene.add(gear);
+                
+                camera.position.z = 15;
+                
+                // 动画循环
+                function animate() {
+                    requestAnimationFrame(animate);
+                    gear.rotation.x += 0.01;
+                    gear.rotation.y += 0.01;
+                    renderer.render(scene, camera);
+                }
+                
+                // 开始动画
+                animate();
+                
+                // 响应窗口变化
+                window.addEventListener('resize', () => {
+                    camera.aspect = bannerElement.offsetWidth / bannerElement.offsetHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(bannerElement.offsetWidth, bannerElement.offsetHeight);
+                });
+                
+                console.log('Three.js初始化成功');
             } catch (error) {
-                console.error('❌ 清空云端数据失败:', error);
-                alert('❌ 清空云端数据失败: ' + error.message);
+                console.error('Three.js初始化失败:', error);
             }
-        };
-
-        // 测试手动同步修复功能（通过控制台调用）
-        window.testManualSyncFix = function() {
-            console.log('🧪 测试手动同步修复功能...');
-
-            // 检查版本
-            console.log('检查脚本版本...');
-            if (window.firebaseSync && window.firebaseSync.pauseRealtimeSync) {
-                console.log('✅ Firebase同步管理器已更新，包含暂停/恢复功能');
+        }
+        
+        // 初始化粒子效果
+        function initParticles() {
+            console.log('初始化粒子效果');
+            try {
+                const bannerElement = document.querySelector('.banner');
+                if (!bannerElement) {
+                    console.error('找不到Banner元素');
+                    return;
+                }
+                
+                // 创建Canvas元素
+                const canvas = document.createElement('canvas');
+                canvas.style.position = 'absolute';
+                canvas.style.top = '0';
+                canvas.style.left = '0';
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.style.zIndex = '2';
+                canvas.style.pointerEvents = 'none';
+                
+                // 获取2D上下文
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('无法获取Canvas 2D上下文');
+                    return;
+                }
+                
+                // 设置Canvas尺寸
+                canvas.width = bannerElement.offsetWidth;
+                canvas.height = bannerElement.offsetHeight;
+                
+                // 添加到DOM
+                bannerElement.style.position = 'relative';
+                bannerElement.style.overflow = 'hidden';
+                bannerElement.appendChild(canvas);
+                
+                // 粒子类
+                class Particle {
+                    constructor() {
+                        this.reset();
+                    }
+                    
+                    reset() {
+                        this.x = Math.random() * canvas.width;
+                        this.y = Math.random() * canvas.height;
+                        this.speed = 0.5 + Math.random() * 1;
+                        this.radius = 1 + Math.random() * 2;
+                        this.direction = Math.random() * Math.PI * 2;
+                    }
+                    
+                    update() {
+                        this.x += Math.cos(this.direction) * this.speed;
+                        this.y += Math.sin(this.direction) * this.speed;
+                        
+                        // 边界检查
+                        if (this.x < 0 || this.x > canvas.width || 
+                            this.y < 0 || this.y > canvas.height) {
+                            this.reset();
+                        }
+                    }
+                    
+                    draw(color) {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = color;
+                        ctx.fill();
+                    }
+                }
+                
+                // 创建粒子
+                const particles = Array(30).fill().map(() => new Particle());
+                
+                // 动画循环
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // 计算颜色渐变
+                    const scrollPercent = Math.min(1, window.scrollY / (document.body.scrollHeight - window.innerHeight));
+                    const startColor = [42, 92, 170]; // #2A5CAA
+                    const endColor = [76, 175, 80];   // #4CAF50
+                    
+                    particles.forEach(particle => {
+                        particle.update();
+                        
+                        // 混合颜色
+                        const color = startColor.map((start, i) => 
+                            Math.round(start + (endColor[i] - start) * scrollPercent)
+                        );
+                        
+                        particle.draw(`rgba(${color.join(',')}, 0.6)`);
+                    });
+                    
+                    requestAnimationFrame(animate);
+                }
+                
+                // 开始动画
+                animate();
+                
+                // 响应窗口变化
+                window.addEventListener('resize', () => {
+                    canvas.width = bannerElement.offsetWidth;
+                    canvas.height = bannerElement.offsetHeight;
+                });
+                
+                console.log('粒子效果初始化成功');
+            } catch (error) {
+                console.error('粒子效果初始化失败:', error);
+            }
+        }
+        
+        // 初始化交互功能
+        function initInteractions() {
+            // 移动菜单交互
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const navMenu = document.getElementById('navMenu');
+            const overlay = document.getElementById('overlay');
+            
+            navMenu.classList.toggle('active');
+            
+            if (navMenu.classList.contains('active')) {
+                overlay.style.display = 'block';
             } else {
-                console.log('❌ Firebase同步管理器未更新');
+                overlay.style.display = 'none';
             }
+        });
 
-            if (window.dataManager && window.dataManager.lastManualSyncTime !== undefined) {
-                console.log('✅ 数据管理器已更新，包含手动同步时间记录');
-            } else {
-                console.log('❌ 数据管理器未更新');
-            }
+        // 点击遮罩关闭菜单
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('navMenu').classList.remove('active');
+            this.style.display = 'none';
+        });
 
-            // 检查当前数据状态
-            console.log('当前数据状态:', {
-                生产数据: window.dataManager?.data?.length || 0,
-                发货历史: window.dataManager?.shippingHistory?.length || 0,
-                原材料: window.dataManager?.materialPurchases?.length || 0
+            // 卡片点击反馈
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const moduleName = this.querySelector('h2').textContent;
+                    console.log(`进入${moduleName}页面`);
+                });
             });
+        }
 
-            console.log('🧪 测试完成，可以尝试手动同步');
-        };
-
-        // 数据变化追踪器（调试用）
-        window.enableDataTracker = function() {
-            console.log('🔍 启用数据变化追踪器...');
-
-            if (!window.dataManager) {
-                console.log('❌ DataManager未加载');
-                return;
+        // 初始化动态背景
+        function initDynamicBackground() {
+            const canvas = document.getElementById('bannerCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 设置canvas尺寸
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
             }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
 
-            // 保存原始方法
-            const originalHandleRemoteDataUpdate = window.dataManager.handleRemoteDataUpdate;
-            const originalHandleRemoteMaterialUpdate = window.dataManager.handleRemoteMaterialUpdate;
-            const originalHandleRemoteShippingUpdate = window.dataManager.handleRemoteShippingUpdate;
-            const originalMergeDataWithRemote = window.dataManager.mergeDataWithRemote;
-
-            // 包装方法以添加日志
-            window.dataManager.handleRemoteDataUpdate = function(remoteData) {
-                console.log('🔍 [追踪] handleRemoteDataUpdate 被调用');
-                console.log('  - 远程数据长度:', remoteData?.length || 0);
-                console.log('  - 调用前本地数据长度:', this.data?.length || 0);
-                console.log('  - 调用堆栈:', new Error().stack);
-
-                const result = originalHandleRemoteDataUpdate.call(this, remoteData);
-
-                console.log('  - 调用后本地数据长度:', this.data?.length || 0);
-                return result;
-            };
-
-            window.dataManager.handleRemoteMaterialUpdate = function(remoteData) {
-                console.log('🔍 [追踪] handleRemoteMaterialUpdate 被调用');
-                console.log('  - 远程数据长度:', remoteData?.length || 0);
-                console.log('  - 调用前本地原材料长度:', this.materialPurchases?.length || 0);
-
-                const result = originalHandleRemoteMaterialUpdate.call(this, remoteData);
-
-                console.log('  - 调用后本地原材料长度:', this.materialPurchases?.length || 0);
-                return result;
-            };
-
-            window.dataManager.mergeDataWithRemote = function(localData, remoteData) {
-                console.log('🔍 [追踪] mergeDataWithRemote 被调用');
-                console.log('  - 本地数据长度:', localData?.length || 0);
-                console.log('  - 远程数据长度:', remoteData?.length || 0);
-
-                const result = originalMergeDataWithRemote.call(this, localData, remoteData);
-
-                console.log('  - 合并后数据长度:', result?.length || 0);
-                return result;
-            };
-
-            console.log('✅ 数据变化追踪器已启用');
-        };
-
-        // 禁用数据追踪器
-        window.disableDataTracker = function() {
-            console.log('🔍 禁用数据变化追踪器...');
-            // 这里可以恢复原始方法，但为了简单起见，建议刷新页面
-            console.log('请刷新页面以禁用追踪器');
-        };
-
-        // 清除Firebase云数据工具
-        window.clearFirebaseData = async function() {
-            console.log('🗑️ 开始清除Firebase云数据...');
-
-            // 详细检查Firebase状态
-            console.log('🔍 检查Firebase状态...');
-            console.log('  - firebaseSync存在:', !!window.firebaseSync);
-            console.log('  - firebaseSync.isInitialized:', window.firebaseSync?.isInitialized);
-            console.log('  - firebaseSync.db存在:', !!window.firebaseSync?.db);
-            console.log('  - firebaseDB存在:', !!window.firebaseDB);
-
-            // 尝试使用不同的数据库引用
-            let db = null;
-            if (window.firebaseSync && window.firebaseSync.db) {
-                db = window.firebaseSync.db;
-                console.log('✅ 使用 firebaseSync.db');
-            } else if (window.firebaseDB) {
-                db = window.firebaseDB;
-                console.log('✅ 使用 firebaseDB');
-            } else {
-                console.log('❌ 无法找到Firebase数据库引用');
-                if (window.dataManager && window.dataManager.showNotification) {
-                    window.dataManager.showNotification('Firebase未正确初始化，请刷新页面重试', 'error');
-                }
-                return;
-            }
-
-            const confirmClear = confirm('⚠️ 确定要删除所有云端数据吗？\n\n这将删除：\n- 所有生产数据\n- 所有发货历史\n- 所有原材料记录\n\n本地数据不会受影响，但建议先导出备份。');
-
-            if (!confirmClear) {
-                console.log('❌ 用户取消操作');
-                return;
-            }
-
-            try {
-                // 删除所有集合的数据
-                const collections = ['productionData', 'shippingHistory', 'materialPurchases'];
-                let totalDeleted = 0;
-
-                for (const collectionName of collections) {
-                    console.log(`🗑️ 清除 ${collectionName} 集合...`);
-
-                    try {
-                        // 获取集合引用
-                        const collectionRef = db.collection(collectionName);
-                        console.log(`  - 获取 ${collectionName} 集合引用成功`);
-
-                        // 获取所有文档
-                        const snapshot = await collectionRef.get();
-                        console.log(`  - 找到 ${snapshot.docs.length} 个文档`);
-
-                        if (snapshot.docs.length === 0) {
-                            console.log(`  - ${collectionName} 集合为空，跳过`);
-                            continue;
-                        }
-
-                        // 批量删除（分批处理，避免超出限制）
-                        const batchSize = 500; // Firestore批量操作限制
-                        const docs = snapshot.docs;
-
-                        for (let i = 0; i < docs.length; i += batchSize) {
-                            const batch = db.batch();
-                            const batchDocs = docs.slice(i, i + batchSize);
-
-                            batchDocs.forEach(doc => {
-                                batch.delete(doc.ref);
-                            });
-
-                            await batch.commit();
-                            console.log(`  - 删除了 ${batchDocs.length} 个文档 (${i + 1}-${i + batchDocs.length})`);
-                            totalDeleted += batchDocs.length;
-                        }
-
-                        console.log(`✅ ${collectionName} 集合已清空 (共删除 ${docs.length} 个文档)`);
-
-                    } catch (collectionError) {
-                        console.error(`❌ 清除 ${collectionName} 集合失败:`, collectionError);
-                        console.error('  - 错误详情:', collectionError.message);
-                        console.error('  - 错误代码:', collectionError.code);
-                    }
+            // 圆球类
+            class Circle {
+                constructor() {
+                    this.reset();
                 }
 
-                console.log(`🎉 云端数据清除完成！共删除 ${totalDeleted} 个文档`);
-
-                if (window.dataManager && window.dataManager.showNotification) {
-                    window.dataManager.showNotification(`云端数据已清除 (删除${totalDeleted}个文档)，本地数据保持不变`, 'success');
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = 5 + Math.random() * 8;
+                    this.speedX = (Math.random() - 0.5) * 2;
+                    this.speedY = (Math.random() - 0.5) * 2;
+                    this.opacity = 0.1 + Math.random() * 0.4;
                 }
 
-            } catch (error) {
-                console.error('❌ 清除云数据失败:', error);
-                console.error('  - 错误类型:', error.constructor.name);
-                console.error('  - 错误消息:', error.message);
-                console.error('  - 错误代码:', error.code);
-                console.error('  - 完整错误:', error);
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
 
-                if (window.dataManager && window.dataManager.showNotification) {
-                    window.dataManager.showNotification('清除云数据失败: ' + error.message, 'error');
+                    // 边界检查
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                    ctx.fill();
                 }
             }
-        };
 
-        // 快速清除空数据（只删除空的云端记录）
-        window.clearEmptyFirebaseData = async function() {
-            console.log('🧹 开始清除空的Firebase数据...');
+            // 创建圆球
+            const circles = Array(50).fill().map(() => new Circle());
 
-            if (!window.firebaseSync || !window.firebaseSync.isInitialized) {
-                console.log('❌ Firebase未初始化');
-                return;
-            }
+            // 连线函数
+            function drawLines() {
+                circles.forEach((circle1, i) => {
+                    circles.slice(i + 1).forEach(circle2 => {
+                        const dx = circle1.x - circle2.x;
+                        const dy = circle1.y - circle2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
 
-            try {
-                const collections = ['productionData', 'shippingHistory', 'materialPurchases'];
-                let totalDeleted = 0;
-
-                for (const collectionName of collections) {
-                    console.log(`🧹 检查 ${collectionName} 集合...`);
-
-                    const collectionRef = window.firebaseSync.db.collection(collectionName);
-                    const snapshot = await collectionRef.get();
-
-                    if (snapshot.empty) {
-                        console.log(`  - ${collectionName} 集合为空，跳过`);
-                        continue;
-                    }
-
-                    // 查找空记录或无效记录
-                    const batch = window.firebaseSync.db.batch();
-                    let deletedCount = 0;
-
-                    snapshot.docs.forEach(doc => {
-                        const data = doc.data();
-
-                        // 检查是否为空记录或无效记录
-                        if (!data ||
-                            Object.keys(data).length === 0 ||
-                            (Array.isArray(data) && data.length === 0) ||
-                            (!data.id && !data.specification && !data.area)) {
-
-                            batch.delete(doc.ref);
-                            deletedCount++;
+                        if (distance < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(circle1.x, circle1.y);
+                            ctx.lineTo(circle2.x, circle2.y);
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 * (1 - distance/150)})`;
+                            ctx.stroke();
                         }
                     });
-
-                    if (deletedCount > 0) {
-                        await batch.commit();
-                        console.log(`  - 删除了 ${deletedCount} 个空记录`);
-                        totalDeleted += deletedCount;
-                    } else {
-                        console.log(`  - 没有发现空记录`);
-                    }
-                }
-
-                console.log(`🎉 清理完成，共删除 ${totalDeleted} 个空记录`);
-
-                if (window.dataManager && window.dataManager.showNotification) {
-                    window.dataManager.showNotification(`已清理 ${totalDeleted} 个空记录`, 'success');
-                }
-
-            } catch (error) {
-                console.error('❌ 清理空数据失败:', error);
-
-                if (window.dataManager && window.dataManager.showNotification) {
-                    window.dataManager.showNotification('清理失败: ' + error.message, 'error');
-                }
-            }
-        };
-
-        // 数据管理工具集
-        window.dataTools = {
-            // 查看云端数据状态
-            async checkCloudData() {
-                console.log('🔍 检查云端数据状态...');
-
-                if (!window.firebaseSync || !window.firebaseSync.isInitialized) {
-                    console.log('❌ Firebase未初始化');
-                    return;
-                }
-
-                try {
-                    const collections = ['productionData', 'shippingHistory', 'materialPurchases'];
-                    const status = {};
-
-                    for (const collectionName of collections) {
-                        const collectionRef = window.firebaseSync.db.collection(collectionName);
-                        const snapshot = await collectionRef.get();
-
-                        status[collectionName] = {
-                            count: snapshot.docs.length,
-                            isEmpty: snapshot.empty,
-                            docs: snapshot.docs.map(doc => ({
-                                id: doc.id,
-                                data: doc.data()
-                            }))
-                        };
-                    }
-
-                    console.log('☁️ 云端数据状态:', status);
-                    return status;
-                } catch (error) {
-                    console.error('❌ 检查云端数据失败:', error);
-                }
-            },
-
-            // 查看本地数据状态
-            checkLocalData() {
-                console.log('💾 本地数据状态:');
-
-                const localStatus = {
-                    生产数据: window.dataManager?.data?.length || 0,
-                    发货历史: window.dataManager?.shippingHistory?.length || 0,
-                    原材料: window.dataManager?.materialPurchases?.length || 0,
-                    localStorage: {
-                        productionData: JSON.parse(localStorage.getItem('productionData') || '[]').length,
-                        shippingHistory: JSON.parse(localStorage.getItem('shippingHistory') || '[]').length,
-                        materialPurchases: JSON.parse(localStorage.getItem('materialPurchases') || '[]').length
-                    }
-                };
-
-                console.log(localStatus);
-                return localStatus;
-            },
-
-            // 备份本地数据到控制台
-            backupLocalData() {
-                console.log('💾 备份本地数据...');
-
-                const backup = {
-                    timestamp: new Date().toISOString(),
-                    productionData: JSON.parse(localStorage.getItem('productionData') || '[]'),
-                    shippingHistory: JSON.parse(localStorage.getItem('shippingHistory') || '[]'),
-                    materialPurchases: JSON.parse(localStorage.getItem('materialPurchases') || '[]')
-                };
-
-                console.log('📦 本地数据备份:', backup);
-                console.log('💡 提示：可以复制上面的对象保存为备份');
-
-                return backup;
-            },
-
-            // 从备份恢复数据
-            restoreFromBackup(backup) {
-                console.log('🔄 从备份恢复数据...');
-
-                if (!backup || !backup.productionData) {
-                    console.log('❌ 无效的备份数据');
-                    return;
-                }
-
-                try {
-                    localStorage.setItem('productionData', JSON.stringify(backup.productionData));
-                    localStorage.setItem('shippingHistory', JSON.stringify(backup.shippingHistory || []));
-                    localStorage.setItem('materialPurchases', JSON.stringify(backup.materialPurchases || []));
-
-                    // 更新内存中的数据
-                    if (window.dataManager) {
-                        window.dataManager.data = backup.productionData;
-                        window.dataManager.shippingHistory = backup.shippingHistory || [];
-                        window.dataManager.materialPurchases = backup.materialPurchases || [];
-
-                        // 刷新界面
-                        window.dataManager.renderTable();
-                        window.dataManager.updateStats();
-                        window.dataManager.renderAreaStats();
-                        window.dataManager.renderUnproducedStats();
-                    }
-
-                    console.log('✅ 数据恢复完成');
-
-                    if (window.dataManager && window.dataManager.showNotification) {
-                        window.dataManager.showNotification('数据已从备份恢复', 'success');
-                    }
-                } catch (error) {
-                    console.error('❌ 恢复数据失败:', error);
-                }
-            },
-
-            // 完整的数据诊断
-            async fullDiagnosis() {
-                console.log('🔬 开始完整数据诊断...');
-                console.log('================================');
-
-                // 1. 检查本地数据
-                console.log('1️⃣ 本地数据检查:');
-                this.checkLocalData();
-
-                // 2. 检查云端数据
-                console.log('\n2️⃣ 云端数据检查:');
-                await this.checkCloudData();
-
-                // 3. 检查Firebase连接状态
-                console.log('\n3️⃣ Firebase连接状态:');
-                console.log('  - 初始化状态:', window.firebaseSync?.isInitialized || false);
-                console.log('  - 连接状态:', window.firebaseSync?.isConnected() || false);
-                console.log('  - 实时监听状态:', window.firebaseSync?.realtimeListeners?.size || 0, '个监听器');
-
-                // 4. 检查最近的同步活动
-                console.log('\n4️⃣ 同步活动检查:');
-                console.log('  - 最后手动同步:', window.dataManager?.lastManualSyncTime ? new Date(window.dataManager.lastManualSyncTime).toLocaleString() : '无');
-                console.log('  - 是否正在手动同步:', window.dataManager?.isManualSyncing || false);
-
-                console.log('\n🔬 诊断完成');
-            }
-        };
-
-        // 快捷命令
-        window.checkData = () => window.dataTools.fullDiagnosis();
-        window.backupData = () => window.dataTools.backupLocalData();
-        window.clearCloud = () => clearFirebaseData();
-
-        // 替代清除方案：通过Firebase控制台
-        window.showFirebaseConsoleInstructions = function() {
-            console.log('🔧 Firebase控制台清除数据指南');
-            console.log('================================');
-            console.log('');
-            console.log('如果程序清除失败，可以通过Firebase控制台手动清除：');
-            console.log('');
-            console.log('1️⃣ 打开Firebase控制台:');
-            console.log('   https://console.firebase.google.com/');
-            console.log('');
-            console.log('2️⃣ 选择您的项目');
-            console.log('');
-            console.log('3️⃣ 进入 Firestore Database');
-            console.log('');
-            console.log('4️⃣ 删除以下集合中的所有文档:');
-            console.log('   - productionData');
-            console.log('   - shippingHistory');
-            console.log('   - materialPurchases');
-            console.log('');
-            console.log('5️⃣ 或者直接删除整个集合');
-            console.log('');
-            console.log('💡 提示：删除后刷新页面，系统会自动将本地数据上传到云端');
-            console.log('');
-
-            // 尝试打开Firebase控制台
-            if (confirm('是否要打开Firebase控制台？')) {
-                window.open('https://console.firebase.google.com/', '_blank');
-            }
-        };
-
-        // 临时禁用云同步
-        window.disableCloudSync = function() {
-            console.log('⏸️ 临时禁用云同步...');
-
-            if (window.firebaseSync) {
-                // 暂停实时监听
-                if (window.firebaseSync.pauseRealtimeSync) {
-                    window.firebaseSync.pauseRealtimeSync();
-                    console.log('✅ 实时同步已暂停');
-                }
-
-                // 标记为未初始化
-                window.firebaseSync.isInitialized = false;
-                console.log('✅ Firebase同步已禁用');
-
-                if (window.dataManager && window.dataManager.showNotification) {
-                    window.dataManager.showNotification('云同步已禁用，系统将只使用本地数据', 'info');
-                }
-            }
-        };
-
-        // 重新启用云同步
-        window.enableCloudSync = function() {
-            console.log('▶️ 重新启用云同步...');
-
-            if (window.firebaseSync) {
-                window.firebaseSync.isInitialized = true;
-
-                if (window.firebaseSync.resumeRealtimeSync) {
-                    window.firebaseSync.resumeRealtimeSync();
-                    console.log('✅ 实时同步已恢复');
-                }
-
-                // 重新初始化
-                setTimeout(() => {
-                    if (window.firebaseSync.performInitialSync) {
-                        window.firebaseSync.performInitialSync();
-                    }
-                }, 1000);
-
-                console.log('✅ Firebase同步已启用');
-
-                if (window.dataManager && window.dataManager.showNotification) {
-                    window.dataManager.showNotification('云同步已启用', 'success');
-                }
-            }
-        };
-
-        // 更多快捷命令
-        window.firebaseHelp = () => showFirebaseConsoleInstructions();
-        window.disableSync = () => disableCloudSync();
-        window.enableSync = () => enableCloudSync();
-
-        // 图表调试命令
-        window.refreshCharts = () => refreshAllCharts();
-        window.fixCharts = () => fixChartDisplay();
-        window.debugCharts = function() {
-            console.log('📊 图表调试信息');
-            console.log('================');
-            console.log('Chart.js实例数量:', Chart.instances.length);
-            console.log('全局图表对象:', window.charts);
-            console.log('数据管理器数据量:', window.dataManager?.data?.length || 0);
-
-            // 检查每个图表
-            Chart.instances.forEach((chart, index) => {
-                console.log(`图表 ${index + 1}:`, {
-                    类型: chart.config.type,
-                    数据标签: chart.data.labels,
-                    数据值: chart.data.datasets[0]?.data,
-                    容器ID: chart.canvas.id
                 });
-            });
-        };
-
-        // 停止冲突通知功能（隐藏，通过控制台调用）
-        window.toggleConflictNotifications = function() {
-            const isDisabled = localStorage.getItem('disableConflictNotifications') === 'true';
-
-            if (isDisabled) {
-                localStorage.removeItem('disableConflictNotifications');
-                alert('✅ 冲突通知已启用');
-            } else {
-                localStorage.setItem('disableConflictNotifications', 'true');
-                alert('✅ 冲突通知已禁用');
             }
-        };
 
-        // 强制上传本地数据到云端（隐藏，通过控制台调用）
-        window.forceUploadToCloud = function() {
-            if (window.dataManager && typeof window.dataManager.forceUploadToCloud === 'function') {
-                window.dataManager.forceUploadToCloud();
-            } else {
-                alert('❌ 数据管理器未加载，无法执行上传');
+            // 动画循环
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                circles.forEach(circle => {
+                    circle.update();
+                    circle.draw();
+                });
+                
+                drawLines();
+                requestAnimationFrame(animate);
             }
-        };
+
+            animate();
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', initDynamicBackground);
+
+        // 全局搜索功能
+        document.getElementById('globalSearch').addEventListener('input', function(e) {
+            const searchResults = document.getElementById('searchResults');
+            if (e.target.value.length > 0) {
+                searchResults.classList.add('active');
+                // 这里可以添加实际的搜索逻辑
+                } else {
+                searchResults.classList.remove('active');
+            }
+        });
+
+        // 点击外部关闭搜索结果
+        document.addEventListener('click', function(e) {
+            const searchContainer = document.querySelector('.search-container');
+            const searchResults = document.getElementById('searchResults');
+            if (!searchContainer.contains(e.target)) {
+                searchResults.classList.remove('active');
+            }
+        });
+
+        // 添加咨询功能
+        function showConsultationModal() {
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '50%';
+            modal.style.left = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
+            modal.style.backgroundColor = 'white';
+            modal.style.padding = '30px';
+            modal.style.borderRadius = '15px';
+            modal.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
+            modal.style.zIndex = '1000';
+            modal.style.maxWidth = '90%';
+            modal.style.width = '400px';
+
+            // 添加内容
+            modal.innerHTML = `
+                <h2 style="color: #2A5CAA; margin-bottom: 20px; font-size: 24px;">
+                    <i class="fas fa-headset" style="margin-right: 10px;"></i>
+                    联系我们
+                </h2>
+                <p style="color: #666; margin-bottom: 15px;">请留下您的联系方式，我们会尽快与您联系。</p>
+                <form id="consultationForm" style="display: flex; flex-direction: column; gap: 15px;">
+                    <input type="text" placeholder="您的称呼" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    <input type="tel" placeholder="联系电话" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    <textarea placeholder="咨询内容（选填）" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; height: 100px; resize: none;"></textarea>
+                    <button type="submit" style="background: linear-gradient(135deg, #2A5CAA 0%, #4CAF50 100%); color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                        提交咨询
+                    </button>
+                </form>
+                <button onclick="this.parentElement.remove();document.getElementById('modalOverlay').remove();" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 20px; cursor: pointer; color: #666;">
+                    ×
+                </button>
+            `;
+
+            // 创建遮罩
+            const overlay = document.createElement('div');
+            overlay.id = 'modalOverlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            overlay.style.zIndex = '999';
+
+            // 添加到页面
+            document.body.appendChild(overlay);
+            document.body.appendChild(modal);
+
+            // 添加表单提交事件
+            document.getElementById('consultationForm').onsubmit = function(e) {
+                e.preventDefault();
+                alert('感谢您的咨询，我们会尽快与您联系！');
+                modal.remove();
+                overlay.remove();
+            };
+
+            // 点击遮罩关闭模态框
+            overlay.onclick = function() {
+                modal.remove();
+                overlay.remove();
+            };
+        }
     </script>
 </body>
 </html>
